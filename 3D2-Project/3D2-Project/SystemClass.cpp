@@ -4,6 +4,8 @@ SystemClass* SystemClass::ApplicationHandle = 0;
 
 SystemClass::SystemClass()
 {
+	m_input = 0;
+	m_graphics = 0;
 }
 
 
@@ -21,8 +23,20 @@ bool SystemClass::Initialize()
 	InitializeWindows(screenWidth, screenHeight);
 
 	//Input
+	m_input = new Inputclass();
+	result = m_input->Initialize();
+	if (!result)
+	{
+		return false;
+	}
 
 	//Graphics
+	m_graphics = new Graphicsclass();
+	result = m_graphics->Initialize(screenWidth, screenHeight, m_hwnd);
+	if (!result)
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -30,8 +44,13 @@ bool SystemClass::Initialize()
 void SystemClass::Shutdown()
 {
 	//Graphics
+	m_graphics->Shutdown();
+	delete m_graphics;
+	m_graphics = 0;
 
 	//Input
+	delete m_input;
+	m_input = 0;
 
 	ShutdownWindows();
 }
@@ -73,12 +92,12 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 	{
 		case WM_KEYDOWN:
 		{
-			//input
+			m_input->KeyDown((unsigned int)wparam);
 			return 0;
 		}
 		case WM_KEYUP:
 		{
-			//input
+			m_input->KeyUp((unsigned int)wparam);
 			return 0;
 		}
 		default:
@@ -93,15 +112,23 @@ bool SystemClass::Frame()
 	bool result;
 
 	//Input
+	if (m_input->IsKeyDown(VK_ESCAPE))
+	{
+		return false;
+	}
 
 	// Graphics
+	result = m_graphics->Frame();
+	if (!result)
+	{
+		return false;
+	}
 
 	return true;
 }
 
 void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 {
-	bool FULL_SCREEN = false;
 	WNDCLASSEX wc;
 	DEVMODE dmScreenSettings;
 
@@ -177,6 +204,25 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 
 void SystemClass::ShutdownWindows()
 {
+	// Show the mouse cursor.
+	ShowCursor(true);
+
+	// Fix the display settings if leaving full screen mode.
+	if (FULL_SCREEN)
+	{
+		ChangeDisplaySettings(NULL, 0);
+	}
+
+	// Remove the window.
+	DestroyWindow(m_hwnd);
+	m_hwnd = NULL;
+
+	// Remove the application instance.
+	UnregisterClass(m_applicationName, m_hinstance);
+	m_hinstance = NULL;
+
+	// Release the pointer to this class.
+	ApplicationHandle = NULL;
 }
 
 LRESULT CALLBACK SystemClass::WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
