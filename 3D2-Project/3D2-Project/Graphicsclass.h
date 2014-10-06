@@ -20,5 +20,7 @@ public:
 	bool Frame();
 private :
 	bool Render();
+
+	D3DClass* m_D3D;
 };
 
