@@ -39,7 +39,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ExecutablePath>../External/D3D/Utilities/bin/x64/;$(ExecutablePath)</ExecutablePath>
+    <ExecutablePath>../External/D3D/Utilities/bin/x86/;$(ExecutablePath)</ExecutablePath>
     <IncludePath>../External/D3D/Include/;$(IncludePath)</IncludePath>
     <LibraryPath>../External/D3D/Lib/x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -48,11 +48,18 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dxerr.lib;d3d11.lib;d3dx11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxerr.lib;d3d11.lib;d3dx11.lib;d3dcompiler.lib;Effects11d.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <ShaderType>
+      </ShaderType>
+      <EntryPointName>main</EntryPointName>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -80,6 +87,16 @@
     <ClInclude Include="Graphicsclass.h" />
     <ClInclude Include="Inputclass.h" />
     <ClInclude Include="SystemClass.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="ColorPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="ColorVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
