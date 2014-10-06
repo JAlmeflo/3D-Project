@@ -77,16 +77,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="D3DClass.cpp" />
-    <ClCompile Include="Graphicsclass.cpp" />
-    <ClCompile Include="Inputclass.cpp" />
+    <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="SystemClass.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="System.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3DClass.h" />
-    <ClInclude Include="Graphicsclass.h" />
-    <ClInclude Include="Inputclass.h" />
-    <ClInclude Include="SystemClass.h" />
+    <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="System.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColorPS.hlsl">

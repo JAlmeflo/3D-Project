@@ -1,19 +1,19 @@
-#include "SystemClass.h"
-SystemClass* SystemClass::ApplicationHandle = 0;
+#include "System.h"
+System* System::ApplicationHandle = 0;
 
 
-SystemClass::SystemClass()
+System::System()
 {
 	m_input = 0;
 	m_graphics = 0;
 }
 
 
-SystemClass::~SystemClass()
+System::~System()
 {
 }
 
-bool SystemClass::Initialize()
+bool System::Initialize()
 {
 	int screenWidth, screenHeight;
 	bool result;
@@ -23,7 +23,7 @@ bool SystemClass::Initialize()
 	InitializeWindows(screenWidth, screenHeight);
 
 	//Input
-	m_input = new Inputclass();
+	m_input = new Input();
 	result = m_input->Initialize();
 	if (!result)
 	{
@@ -31,7 +31,7 @@ bool SystemClass::Initialize()
 	}
 
 	//Graphics
-	m_graphics = new Graphicsclass();
+	m_graphics = new Graphics();
 	result = m_graphics->Initialize(screenWidth, screenHeight, m_hwnd);
 	if (!result)
 	{
@@ -41,7 +41,7 @@ bool SystemClass::Initialize()
 	return true;
 }
 
-void SystemClass::Shutdown()
+void System::Shutdown()
 {
 	//Graphics
 	m_graphics->Shutdown();
@@ -55,7 +55,7 @@ void SystemClass::Shutdown()
 	ShutdownWindows();
 }
 
-void SystemClass::Run()
+void System::Run()
 {
 	MSG msg;
 	bool done, result;
@@ -86,7 +86,7 @@ void SystemClass::Run()
 	}
 }
 
-LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
 	switch (umsg)
 	{
@@ -107,7 +107,7 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 	}
 }
 
-bool SystemClass::Frame()
+bool System::Frame()
 {
 	bool result;
 
@@ -127,7 +127,7 @@ bool SystemClass::Frame()
 	return true;
 }
 
-void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
+void System::InitializeWindows(int& screenWidth, int& screenHeight)
 {
 	WNDCLASSEX wc;
 	DEVMODE dmScreenSettings;
@@ -202,7 +202,7 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	ShowCursor(true);
 }
 
-void SystemClass::ShutdownWindows()
+void System::ShutdownWindows()
 {
 	// Show the mouse cursor.
 	ShowCursor(true);
@@ -225,7 +225,7 @@ void SystemClass::ShutdownWindows()
 	ApplicationHandle = NULL;
 }
 
-LRESULT CALLBACK SystemClass::WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK System::WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
 	switch (umessage)
 	{

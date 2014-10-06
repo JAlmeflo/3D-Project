@@ -9,11 +9,11 @@ const float SCREEN_NEAR = 0.1f;
 #include <Windows.h>
 #include "D3DClass.h"
 
-class Graphicsclass
+class Graphics
 {
 public:
-	Graphicsclass();
-	~Graphicsclass();
+	Graphics();
+	~Graphics();
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();

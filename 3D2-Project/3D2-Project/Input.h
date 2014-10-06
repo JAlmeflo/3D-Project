@@ -1,9 +1,9 @@
 #pragma once
-class Inputclass
+class Input
 {
 public:
-	Inputclass();
-	~Inputclass();
+	Input();
+	~Input();
 
 	bool Initialize();
 

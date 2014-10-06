@@ -1,17 +1,17 @@
-#include "Graphicsclass.h"
+#include "Graphics.h"
 
 
-Graphicsclass::Graphicsclass()
+Graphics::Graphics()
 {
 	m_D3D = 0;
 }
 
 
-Graphicsclass::~Graphicsclass()
+Graphics::~Graphics()
 {
 }
 
-bool Graphicsclass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
+bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
 
@@ -27,14 +27,14 @@ bool Graphicsclass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	return true;
 }
 
-void Graphicsclass::Shutdown()
+void Graphics::Shutdown()
 {
 	m_D3D->Shutdown();
 	delete m_D3D;
 	m_D3D = 0;
 }
 
-bool Graphicsclass::Frame()
+bool Graphics::Frame()
 {
 	bool result;
 
@@ -47,7 +47,7 @@ bool Graphicsclass::Frame()
 	return true;
 }
 
-bool Graphicsclass::Render()
+bool Graphics::Render()
 {
 	m_D3D->BeginScene(0.5f, 0.5f, 0.5f, 0.5f);
 

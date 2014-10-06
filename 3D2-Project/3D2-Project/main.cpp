@@ -1,8 +1,8 @@
-#include "SystemClass.h"
+#include "System.h"
 
 int main(void)
 {
-	SystemClass system = SystemClass();
+	System system = System();
 
 	if (system.Initialize())
 	{
