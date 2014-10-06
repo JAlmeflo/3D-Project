@@ -454,8 +454,8 @@ void D3DClass::GetOrthoMatrix(D3DXMATRIX& orthoMatrix)
 	orthoMatrix = m_orthoMatrix;
 }
 
-void GetVideoCardInfo(char* cardName, int& memory)
+void D3DClass::GetVideoCardInfo(char* cardName, int& memory)
 {
-	//strcpy_s(cardName, 128, m_videoCardDescription);
-	//memory = m_videoCardMemory;
+	strcpy_s(cardName, 128, m_videoCardDescription);
+	memory = m_videoCardMemory;
 }
