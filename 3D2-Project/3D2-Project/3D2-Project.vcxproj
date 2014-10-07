@@ -76,6 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ColorShader.cpp" />
     <ClCompile Include="D3DClass.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Input.cpp" />
@@ -84,6 +85,7 @@
     <ClCompile Include="System.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ColorShader.h" />
     <ClInclude Include="D3DClass.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Input.h" />
