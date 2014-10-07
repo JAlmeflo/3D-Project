@@ -47,6 +47,8 @@ void Camera::Render()
 	float yaw, pitch, roll;
 	D3DXMATRIX rotationMatrix;
 
+	//m_rotationZ += 1.0f;
+
 	up.x = 0.0f;
 	up.y = 1.0f;
 	up.z = 0.0f;

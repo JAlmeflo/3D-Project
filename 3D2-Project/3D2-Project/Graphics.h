@@ -8,6 +8,9 @@ const float SCREEN_NEAR = 0.1f;
 
 #include <Windows.h>
 #include "D3DClass.h"
+#include "Camera.h"
+#include "Model.h"
+#include "ColorShader.h"
 
 class Graphics
 {
@@ -22,5 +25,8 @@ private :
 	bool Render();
 
 	D3DClass* m_D3D;
+	Camera* m_camera;
+	Model* m_model;
+	ColorShader* m_colorShader;
 };
 

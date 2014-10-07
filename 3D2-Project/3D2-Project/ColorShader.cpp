@@ -18,7 +18,7 @@ bool ColorShader::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
 
-	result = InitializeShader(device, hwnd, L"../3D2-Project/ColorVS.hlsl", L"../3D2-Project/ColorPS.hlsl");
+	result = InitializeShader(device, hwnd, "../3D2-Project/ColorVS.hlsl", "../3D2-Project/ColorPS.hlsl");
 	if (!result)
 	{
 		return false;
@@ -47,7 +47,7 @@ bool ColorShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, D3D
 	return true;
 }
 
-bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
+bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, LPCSTR vsFilename, LPCSTR psFilename)
 {
 	HRESULT result;
 	ID3D10Blob* errorMessage;
@@ -61,14 +61,14 @@ bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFil
 	vertexShaderBuffer = 0;
 	pixelShaderBuffer = 0;
 
-	result = D3DX11CompileFromFile((LPCSTR)vsFilename, NULL, NULL, "main", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,
+	result = D3DX11CompileFromFile(vsFilename, NULL, NULL, "main", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,
 		&vertexShaderBuffer, &errorMessage, NULL);
 	if (FAILED(result))
 	{
 		// If the shader failed to compile it should have writen something to the error message.
 		if (errorMessage)
 		{
-			OutputShaderErrorMessage(errorMessage, hwnd, vsFilename);
+			OutputShaderErrorMessage(errorMessage, hwnd, (WCHAR*)vsFilename);
 		}
 		// If there was nothing in the error message then it simply could not find the shader file itself.
 		else
@@ -79,14 +79,14 @@ bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFil
 		return false;
 	}
 
-	result = D3DX11CompileFromFile((LPCSTR)psFilename, NULL, NULL, "main", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,
+	result = D3DX11CompileFromFile(psFilename, NULL, NULL, "main", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,
 		&pixelShaderBuffer, &errorMessage, NULL);
 	if (FAILED(result))
 	{
 		// If the shader failed to compile it should have writen something to the error message.
 		if (errorMessage)
 		{
-			OutputShaderErrorMessage(errorMessage, hwnd, psFilename);
+			OutputShaderErrorMessage(errorMessage, hwnd, (WCHAR*)psFilename);
 		}
 		// If there was  nothing in the error message then it simply could not find the file itself.
 		else
