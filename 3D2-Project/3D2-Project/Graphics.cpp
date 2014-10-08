@@ -28,7 +28,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the camera
 	m_camera = new Camera();
-	m_camera->SetPosition(0.0f, 0.0f, -10.0f);
+	m_camera->SetPosition(0.0f, 0.0f, -4.0f);
 	//m_camera->SetRotation(0.0f, 20.0f, 0.0f);
 
 	// Create the model

@@ -61,7 +61,7 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 
-	m_vertexCount = 8;
+	m_vertexCount = 4;
 	m_indexCount = 6;
 
 	vertices = new VertexType[m_vertexCount];
@@ -72,16 +72,23 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	vertices[0].position = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);  // Bottom left.
 	vertices[0].texture = D3DXVECTOR2(0.0f, 1.0f);
 
-	vertices[1].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f);  // Top middle.
-	vertices[1].texture = D3DXVECTOR2(0.5f, 0.0f);
+	vertices[1].position = D3DXVECTOR3(-1.0f, 1.0f, 0.0f);  // Top Left.
+	vertices[1].texture = D3DXVECTOR2(0.0f, 0.0f);
 
-	vertices[2].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	vertices[2].texture = D3DXVECTOR2(1.0f, 1.0f);
+	vertices[2].position = D3DXVECTOR3(1.0f, 1.0f, 0.0f);  // Top Right.
+	vertices[2].texture = D3DXVECTOR2(1.0f, 0.0f);
+
+	vertices[3].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f);  // Bottom right.
+	vertices[3].texture = D3DXVECTOR2(1.0f, 1.0f);
 
 	// Load the index array with data.
 	indices[0] = 0;  // Bottom left.
-	indices[1] = 1;  // Top middle.
-	indices[2] = 2;  // Bottom right.
+	indices[1] = 1;  // Top left.
+	indices[2] = 3;  // Bottom right.
+
+	indices[3] = 3;  // Bottom right
+	indices[4] = 1;  // Top left.
+	indices[5] = 2;  // Top right.
 
 	// Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
