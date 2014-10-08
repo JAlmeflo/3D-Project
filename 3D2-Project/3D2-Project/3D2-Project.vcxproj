@@ -85,6 +85,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -95,6 +96,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureShader.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColorPS.hlsl">

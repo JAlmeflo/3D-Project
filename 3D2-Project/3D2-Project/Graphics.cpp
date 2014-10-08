@@ -6,7 +6,7 @@ Graphics::Graphics()
 	m_D3D = 0;
 	m_camera = 0;
 	m_model = 0;
-	m_colorShader = 0;
+	m_textureShader = 0;
 }
 
 
@@ -33,7 +33,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the model
 	m_model = new Model();
-	result = m_model->Initialize(m_D3D->GetDevice());
+	result = m_model->Initialize(m_D3D->GetDevice(), "../3D2-Project/Textures/dirt.jpg");
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
@@ -41,11 +41,11 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create the colorShader
-	m_colorShader = new ColorShader();
-	result = m_colorShader->Initialize(m_D3D->GetDevice(), hwnd);
+	m_textureShader = new TextureShader();
+	result = m_textureShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, "Could not initialize the color shader object.", "Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the texture shader object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -56,9 +56,9 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 void Graphics::Shutdown()
 {
 	// Shutdown colorShader
-	m_colorShader->Shutdown();
-	delete m_colorShader;
-	m_colorShader = 0;
+	m_textureShader->Shutdown();
+	delete m_textureShader;
+	m_textureShader = 0;
 
 	// Shutdown model
 	m_model->Shutdown();
@@ -103,7 +103,7 @@ bool Graphics::Render()
 
 	m_model->Render(m_D3D->GetDeviceContext());
 
-	result = m_colorShader->Render(m_D3D->GetDeviceContext(), m_model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
+	result = m_textureShader->Render(m_D3D->GetDeviceContext(), m_model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_model->GetTexture());
 	if (!result)
 	{
 		return false;
