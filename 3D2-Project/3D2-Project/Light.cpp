@@ -20,6 +20,13 @@ void Light::SetDirection(float x, float y, float z)
 	m_direction = D3DXVECTOR3(x, y, z);
 }
 
+void Light::Rotate(float rotation)
+{
+	float x = cos(rotation);
+	float y = sin(rotation);
+	SetDirection(0, y, x);
+}
+
 D3DXVECTOR4 Light::GetDiffuseColor()
 {
 	return m_diffuseColor;

@@ -34,7 +34,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the model
 	m_model = new Model();
-	result = m_model->Initialize(m_D3D->GetDevice(), "../3D2-Project/Textures/dirt.jpg");
+	result = m_model->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Cube.txt", "../3D2-Project/Textures/dirt.jpg");
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
@@ -52,7 +52,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the light object
 	m_light = new Light();
-	m_light->SetDiffuseColor(1.0f, 0.0f, 1.0f, 1.0f);
+	m_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	m_light->SetDirection(0.0f, 0.0f, 1.0f);
 
 	return true;
@@ -90,11 +90,12 @@ bool Graphics::Frame()
 	static float rotation = 0.0f;
 
 	rotation += (float)D3DX_PI * 0.01f;
-	if (rotation > 360.0f)
+	if (rotation > 2 * D3DX_PI)
 	{
-		rotation -= 360.0f;
+		rotation -= 2 * D3DX_PI;
 	}
 
+	//m_light->Rotate(rotation);
 	result = Render(rotation);
 	if (!result)
 	{

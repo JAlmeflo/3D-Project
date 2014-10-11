@@ -10,6 +10,7 @@ public:
 
 	void SetDiffuseColor(float, float, float, float);
 	void SetDirection(float, float, float);
+	void Rotate(float);
 
 	D3DXVECTOR4 GetDiffuseColor();
 	D3DXVECTOR3 GetDirection();

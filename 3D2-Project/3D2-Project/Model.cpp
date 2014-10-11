@@ -6,6 +6,7 @@ Model::Model()
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
 	m_texture = 0;
+	m_model = 0;
 }
 
 
@@ -13,9 +14,15 @@ Model::~Model()
 {
 }
 
-bool Model::Initialize(ID3D11Device* device, LPCSTR textureFilename)
+bool Model::Initialize(ID3D11Device* device, char* modelFilename, LPCSTR textureFilename)
 {
 	bool result;
+
+	result = LoadModel(modelFilename);
+	if (!result)
+	{
+		return false;
+	}
 
 	result = InitializeBuffers(device);
 	if (!result)
@@ -36,6 +43,7 @@ void Model::Shutdown()
 {
 	ReleaseTexture();
 	ShutdownBuffers();
+	ReleaseModel();
 }
 
 void Model::Render(ID3D11DeviceContext* deviceContext)
@@ -61,37 +69,19 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 
-	m_vertexCount = 4;
-	m_indexCount = 6;
-
 	vertices = new VertexType[m_vertexCount];
 
 	indices = new unsigned long[m_indexCount];
 
-	// Load the vertex array with data.
-	vertices[0].position = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	vertices[0].texture = D3DXVECTOR2(0.0f, 1.0f);
-	vertices[0].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+	// Load the vertex array and index array with data.
+	for (int i = 0; i<m_vertexCount; i++)
+	{
+		vertices[i].position = D3DXVECTOR3(m_model[i].x, m_model[i].y, m_model[i].z);
+		vertices[i].texture = D3DXVECTOR2(m_model[i].tu, m_model[i].tv);
+		vertices[i].normal = D3DXVECTOR3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
 
-	vertices[1].position = D3DXVECTOR3(-1.0f, 1.0f, 0.0f);  // Top Left.
-	vertices[1].texture = D3DXVECTOR2(0.0f, 0.0f);
-	vertices[0].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-
-	vertices[2].position = D3DXVECTOR3(1.0f, 1.0f, 0.0f);  // Top Right.
-	vertices[2].texture = D3DXVECTOR2(1.0f, 0.0f);
-
-	vertices[3].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	vertices[3].texture = D3DXVECTOR2(1.0f, 1.0f);
-	vertices[0].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-
-	// Load the index array with data.
-	indices[0] = 0;  // Bottom left.
-	indices[1] = 1;  // Top left.
-	indices[2] = 3;  // Bottom right.
-
-	indices[3] = 3;  // Bottom right
-	indices[4] = 1;  // Top left.
-	indices[5] = 2;  // Top right.
+		indices[i] = i;
+	}
 
 	// Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -192,4 +182,56 @@ void Model::ReleaseTexture()
 	m_texture->Shutdown();
 	delete m_texture;
 	m_texture = 0;
+}
+
+bool Model::LoadModel(char* filename)
+{
+	ifstream fin;
+	char input;
+	char* str = new char();
+	
+	fin.open(filename);
+	if (fin.fail())
+	{
+		return false;
+	}
+
+	fin.get(input);
+	while (input != ':')
+	{
+		fin.get(input);
+	}
+
+	fin >> m_vertexCount;
+	m_indexCount = m_vertexCount;
+
+	m_model = new ModelType[m_vertexCount];
+	
+	//while (input != ':')
+	//{
+	//	fin.get(input);
+	//}
+	//fin.get(input);
+	//fin.get(input);
+	fin >> str;
+	//fin >> str;
+	//fin >> str;
+
+	for (int i = 0; i < m_vertexCount; i++)
+	{
+
+		fin >> m_model[i].x >> m_model[i].y >> m_model[i].z;
+		fin >> m_model[i].tu >> m_model[i].tv;
+		fin >> m_model[i].nx >> m_model[i].ny >> m_model[i].nz;
+	}
+
+	fin.close();
+
+	return true;
+}
+
+void Model::ReleaseModel()
+{
+	delete[] m_model;
+	m_model = 0;
 }
