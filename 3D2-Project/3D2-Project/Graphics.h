@@ -10,7 +10,8 @@ const float SCREEN_NEAR = 0.1f;
 #include "D3DClass.h"
 #include "Camera.h"
 #include "Model.h"
-#include "TextureShader.h"
+#include "LightShader.h"
+#include "Light.h"
 
 class Graphics
 {
@@ -22,11 +23,12 @@ public:
 	void Shutdown();
 	bool Frame();
 private :
-	bool Render();
+	bool Render(float);
 
 	D3DClass* m_D3D;
 	Camera* m_camera;
 	Model* m_model;
-	TextureShader* m_textureShader;
+	LightShader* m_lightShader;
+	Light* m_light;
 };
 

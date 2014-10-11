@@ -18,7 +18,7 @@ private:
 
 	struct LightBufferType
 	{
-		D3DXVECTOR4 diffuseLight;
+		D3DXVECTOR4 diffuseColor;
 		D3DXVECTOR3 lightDirection;
 		float padding; // Added extra padding so structure is a multiple of 16 for CreateBuffer function requirements.
 	};
@@ -35,7 +35,7 @@ private:
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND, LPCSTR);
 
 	bool SetShaderParameters(ID3D11DeviceContext*, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, ID3D11ShaderResourceView*, D3DXVECTOR3, D3DXVECTOR4);
-
+	void RenderShader(ID3D11DeviceContext*, int);
 
 	ID3D11VertexShader* m_vertexShader;
 	ID3D11PixelShader* m_pixelShader;
