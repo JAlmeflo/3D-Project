@@ -34,7 +34,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the model
 	m_model = new Model();
-	result = m_model->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Cube.txt", "../3D2-Project/Textures/dirt.jpg");
+	result = m_model->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Cube.obj", "../3D2-Project/Textures/dirt.jpg");
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);

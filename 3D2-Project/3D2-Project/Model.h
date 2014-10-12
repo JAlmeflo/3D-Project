@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include "Texture.h"
+#include "OBJReader.h"
 
 using namespace std;
 
@@ -49,5 +50,6 @@ private:
 	int m_vertexCount, m_indexCount;
 	Texture* m_texture;
 	ModelType* m_model;
+	OBJReader reader;
 };
 

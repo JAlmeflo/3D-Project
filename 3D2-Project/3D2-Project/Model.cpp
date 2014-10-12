@@ -18,6 +18,8 @@ bool Model::Initialize(ID3D11Device* device, char* modelFilename, LPCSTR texture
 {
 	bool result;
 
+	reader = OBJReader();
+
 	result = LoadModel(modelFilename);
 	if (!result)
 	{
@@ -69,18 +71,33 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 
-	vertices = new VertexType[m_vertexCount];
+	//vertices = new VertexType[m_vertexCount];
+	//indices = new unsigned long[m_indexCount];
 
+	//// Load the vertex array and index array with data.
+	//for (int i = 0; i<m_vertexCount; i++)
+	//{
+	//	vertices[i].position = D3DXVECTOR3(m_model[i].x, m_model[i].y, m_model[i].z);
+	//	vertices[i].texture = D3DXVECTOR2(m_model[i].tu, m_model[i].tv);
+	//	vertices[i].normal = D3DXVECTOR3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
+
+	//	indices[i] = i;
+	//}
+	m_vertexCount = reader.GetVertices().size();
+	m_indexCount = reader.GetFaces().size() * 3;
+
+	vertices = new VertexType[m_vertexCount];
 	indices = new unsigned long[m_indexCount];
 
-	// Load the vertex array and index array with data.
-	for (int i = 0; i<m_vertexCount; i++)
+	for (int i = 0; i < m_vertexCount; i++)
 	{
-		vertices[i].position = D3DXVECTOR3(m_model[i].x, m_model[i].y, m_model[i].z);
-		vertices[i].texture = D3DXVECTOR2(m_model[i].tu, m_model[i].tv);
-		vertices[i].normal = D3DXVECTOR3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
-
-		indices[i] = i;
+		vertices[i].position = reader.GetVertices()[i];
+		vertices[i].texture = reader.GetTexCoords()[i];
+		vertices[i].normal = reader.GetNormals()[i];
+	}
+	for (int i = 0; i < m_indexCount; i += 3)
+	{
+		
 	}
 
 	// Set up the description of the static vertex buffer.
@@ -186,6 +203,9 @@ void Model::ReleaseTexture()
 
 bool Model::LoadModel(char* filename)
 {
+	
+	reader.Load(filename);
+
 	ifstream fin;
 	char input;
 	char* str = new char();
