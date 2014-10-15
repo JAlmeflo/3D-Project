@@ -83,22 +83,20 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 
 	//	indices[i] = i;
 	//}
-	m_vertexCount = reader.GetVertices().size();
-	m_indexCount = reader.GetFaces().size() * 3;
-
+	m_vertexCount = reader.GetVertexPoints().size();
+    m_indexCount = m_vertexCount;
 	vertices = new VertexType[m_vertexCount];
 	indices = new unsigned long[m_indexCount];
 
 	for (int i = 0; i < m_vertexCount; i++)
 	{
-		vertices[i].position = reader.GetVertices()[i];
-		vertices[i].texture = reader.GetTexCoords()[i];
-		vertices[i].normal = reader.GetNormals()[i];
+        VertexPoint point = reader.GetVertexPoints()[i];
+        vertices[i].position = point.vertex;
+        vertices[i].texture = point.texture;
+        vertices[i].normal = point.normal;
+        indices[i] = i;
 	}
-	for (int i = 0; i < m_indexCount; i += 3)
-	{
-		
-	}
+
 
 	// Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -206,6 +204,7 @@ bool Model::LoadModel(char* filename)
 	
 	reader.Load(filename);
 
+    return true;
 	ifstream fin;
 	char input;
 	char* str = new char();

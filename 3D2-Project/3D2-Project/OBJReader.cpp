@@ -33,11 +33,11 @@ bool OBJReader::Load(char* filename)
 		if (str == "v")
 			ReadVertexPos(file);
 		else if (str == "vt")
-			ReadTexCoords(file);
+			ReadTexCoord(file);
 		else if (str == "vn")
-			ReadNormals(file);
+			ReadNormal(file);
 		else if (str == "f")
-			ReadFaces(file);
+			ReadFace(file);
 	}
 
 	return true;
@@ -48,7 +48,7 @@ void OBJReader::ResetVectors()
 	m_vertices = std::vector<D3DXVECTOR3>();
 	m_texCoords = std::vector<D3DXVECTOR2>();
 	m_normals = std::vector<D3DXVECTOR3>();
-	m_faces = std::vector<Face>();
+    m_vertexPoints = std::vector<VertexPoint>();
 }
 
 void OBJReader::ReadVertexPos(std::ifstream& file)
@@ -64,7 +64,7 @@ void OBJReader::ReadVertexPos(std::ifstream& file)
 	m_vertices.push_back(vertex);
 }
 
-void OBJReader::ReadTexCoords(std::ifstream& file)
+void OBJReader::ReadTexCoord(std::ifstream& file)
 {
 	D3DXVECTOR2 texCoord;
 
@@ -74,7 +74,7 @@ void OBJReader::ReadTexCoords(std::ifstream& file)
 	m_texCoords.push_back(texCoord);
 }
 
-void OBJReader::ReadNormals(std::ifstream& file)
+void OBJReader::ReadNormal(std::ifstream& file)
 {
 	D3DXVECTOR3 normal;
 
@@ -85,40 +85,29 @@ void OBJReader::ReadNormals(std::ifstream& file)
 	m_normals.push_back(normal);
 }
 
-void OBJReader::ReadFaces(std::ifstream& file)
+void OBJReader::ReadFace(std::ifstream& file)
 {
-	char* cp = new char();
-	std::string str;
-	int3 subFace;
-	Face face;
+    std::string str;
+    char* cp = new char();
+    VertexPoint point;
 
-	file >> cp;
-	str = cp;	
-	subFace = ConvertSubFace(str);
-	face.vertex1 = m_vertices[subFace.x - 1];
-	face.texture1 = m_texCoords[subFace.y - 1];
-	face.normal1 = m_normals[subFace.z - 1];
+    for (int i = 0; i < 3; i++)
+    {
+        file >> cp;
+        str = cp;
+        int3 indicies = ConvertFaceValues(str);
 
-	file >> cp;
-	str = cp;
-	subFace = ConvertSubFace(str);
-	face.vertex2 = m_vertices[subFace.x - 1];
-	face.texture2 = m_texCoords[subFace.y - 1];
-	face.normal2 = m_normals[subFace.z - 1];
+        point.vertex = m_vertices[indicies.x - 1];
+        point.texture = m_texCoords[indicies.y - 1];
+        point.normal = m_normals[indicies.z - 1];
 
-	file >> cp;
-	str = cp;
-	subFace = ConvertSubFace(str);
-	face.vertex3 = m_vertices[subFace.x - 1];
-	face.texture3 = m_texCoords[subFace.y - 1];
-	face.normal3 = m_normals[subFace.z - 1];
-
-	m_faces.push_back(face);
+        m_vertexPoints.push_back(point);
+    }
 }
 
-int3 OBJReader::ConvertSubFace(std::string str)
+int3 OBJReader::ConvertFaceValues(std::string str)
 {
-	int3 face;
+	int3 values;
 	std::string string1 = "", string2 = "", string3 = "";
 	int n = 0;
 	for (unsigned int i = 0; i < str.size(); i++)
@@ -145,11 +134,11 @@ int3 OBJReader::ConvertSubFace(std::string str)
 		}
 	}
 
-	face.x = atoi(string1.c_str());
-	face.y = atoi(string2.c_str());
-	face.z = atoi(string3.c_str());
+    values.x = atoi(string1.c_str());
+    values.y = atoi(string2.c_str());
+    values.z = atoi(string3.c_str());
 
-	return face;
+    return values;
 }
 
 std::vector<D3DXVECTOR3> OBJReader::GetVertices()
@@ -167,7 +156,7 @@ std::vector<D3DXVECTOR3> OBJReader::GetNormals()
 	return m_normals;
 }
 
-std::vector<Face> OBJReader::GetFaces()
+std::vector<VertexPoint> OBJReader::GetVertexPoints()
 {
-	return m_faces;
+    return m_vertexPoints;
 }

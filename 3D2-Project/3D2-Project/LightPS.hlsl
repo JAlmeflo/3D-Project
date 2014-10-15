@@ -38,5 +38,5 @@ float4 main(PixelInputType input) : SV_TARGET
 
 	color = color * textureColor;
 
-	return color;
+    return color;
 }
