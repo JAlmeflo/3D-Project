@@ -86,6 +86,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="OBJReader.cpp" />
+    <ClCompile Include="Publisher.cpp" />
+    <ClCompile Include="Subscriber.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureShader.cpp" />
@@ -100,6 +102,8 @@
     <ClInclude Include="LightShader.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="OBJReader.h" />
+    <ClInclude Include="Publisher.h" />
+    <ClInclude Include="Subscriber.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureShader.h" />

@@ -24,7 +24,7 @@ void Light::Rotate(float rotation)
 {
 	float x = cos(rotation);
 	float y = sin(rotation);
-	SetDirection(0, y, x);
+	SetDirection(x, y, GetDirection().z);
 }
 
 D3DXVECTOR4 Light::GetDiffuseColor()

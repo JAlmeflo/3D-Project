@@ -5,9 +5,9 @@
 #include <vector>
 #include <D3DX10math.h>
 
-struct VertexPoint
+struct Vertex
 {
-	D3DXVECTOR3 vertex;
+	D3DXVECTOR3 position;
 	D3DXVECTOR2 texture;
 	D3DXVECTOR3 normal;
 };
@@ -24,10 +24,7 @@ public:
 	~OBJReader();
 
 	bool Load(char* filename);
-	std::vector<D3DXVECTOR3> GetVertices();
-	std::vector<D3DXVECTOR2> GetTexCoords();
-	std::vector<D3DXVECTOR3> GetNormals();
-    std::vector<VertexPoint> GetVertexPoints();
+	std::vector<Vertex> GetVertices();
 private:
 	void ResetVectors();
 	void ReadVertexPos(std::ifstream& file);
@@ -36,9 +33,9 @@ private:
 	void ReadFace(std::ifstream& file);
 	int3 ConvertFaceValues(std::string);
 
-	std::vector<D3DXVECTOR3> m_vertices;
+	std::vector<D3DXVECTOR3> m_positions;
 	std::vector<D3DXVECTOR2> m_texCoords;
 	std::vector<D3DXVECTOR3> m_normals;
-    std::vector<VertexPoint> m_vertexPoints;
+	std::vector<Vertex> m_vertices;
 };
 

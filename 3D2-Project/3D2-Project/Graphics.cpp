@@ -29,12 +29,12 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the camera
 	m_camera = new Camera();
-	m_camera->SetPosition(0.0f, 0.0f, -10.0f);
+	m_camera->SetPosition(0.0f, 1.0f, -50.0f);
 	//m_camera->SetRotation(0.0f, 20.0f, 0.0f);
 
 	// Create the model
 	m_model = new Model();
-	result = m_model->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Cube.obj", "../3D2-Project/Textures/dirt.jpg");
+	result = m_model->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Van.obj", "../3D2-Project/Textures/Van.jpg");
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
@@ -118,7 +118,7 @@ bool Graphics::Render(float rotation)
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
-	D3DXMatrixRotationY(&worldMatrix, rotation);
+	//D3DXMatrixRotationY(&worldMatrix, rotation);
 
 	m_model->Render(m_D3D->GetDeviceContext());
 

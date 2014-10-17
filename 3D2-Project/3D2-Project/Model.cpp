@@ -83,17 +83,17 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 
 	//	indices[i] = i;
 	//}
-	m_vertexCount = reader.GetVertexPoints().size();
+	m_vertexCount = reader.GetVertices().size();
     m_indexCount = m_vertexCount;
 	vertices = new VertexType[m_vertexCount];
 	indices = new unsigned long[m_indexCount];
 
 	for (int i = 0; i < m_vertexCount; i++)
 	{
-        VertexPoint point = reader.GetVertexPoints()[i];
-        vertices[i].position = point.vertex;
-        vertices[i].texture = point.texture;
-        vertices[i].normal = point.normal;
+		Vertex vertex = reader.GetVertices()[i];
+		vertices[i].position = vertex.position;
+		vertices[i].texture = vertex.texture;
+		vertices[i].normal = vertex.normal;
         indices[i] = i;
 	}
 

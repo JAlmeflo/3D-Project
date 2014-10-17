@@ -45,10 +45,10 @@ bool OBJReader::Load(char* filename)
 
 void OBJReader::ResetVectors()
 {
-	m_vertices = std::vector<D3DXVECTOR3>();
+	m_positions = std::vector<D3DXVECTOR3>();
 	m_texCoords = std::vector<D3DXVECTOR2>();
 	m_normals = std::vector<D3DXVECTOR3>();
-    m_vertexPoints = std::vector<VertexPoint>();
+	m_vertices = std::vector<Vertex>();
 }
 
 void OBJReader::ReadVertexPos(std::ifstream& file)
@@ -58,10 +58,11 @@ void OBJReader::ReadVertexPos(std::ifstream& file)
 	file >> vertex.x;
 	file >> vertex.y;
 	file >> vertex.z;
-	// Go from right to left handed coordinates
-	vertex.z *= -1;
 
-	m_vertices.push_back(vertex);
+	// Go from right to left handed coordinates
+	//vertex.z *= -1; ERRROR value is correct in the first place
+
+	m_positions.push_back(vertex);
 }
 
 void OBJReader::ReadTexCoord(std::ifstream& file)
@@ -89,7 +90,7 @@ void OBJReader::ReadFace(std::ifstream& file)
 {
     std::string str;
     char* cp = new char();
-    VertexPoint point;
+	Vertex point;
 
     for (int i = 0; i < 3; i++)
     {
@@ -97,11 +98,11 @@ void OBJReader::ReadFace(std::ifstream& file)
         str = cp;
         int3 indicies = ConvertFaceValues(str);
 
-        point.vertex = m_vertices[indicies.x - 1];
+		point.position = m_positions[indicies.x - 1];
         point.texture = m_texCoords[indicies.y - 1];
         point.normal = m_normals[indicies.z - 1];
 
-        m_vertexPoints.push_back(point);
+		m_vertices.push_back(point);
     }
 }
 
@@ -141,22 +142,7 @@ int3 OBJReader::ConvertFaceValues(std::string str)
     return values;
 }
 
-std::vector<D3DXVECTOR3> OBJReader::GetVertices()
+std::vector<Vertex> OBJReader::GetVertices()
 {
 	return m_vertices;
-}
-
-std::vector<D3DXVECTOR2> OBJReader::GetTexCoords()
-{
-	return m_texCoords;
-}
-
-std::vector<D3DXVECTOR3> OBJReader::GetNormals()
-{
-	return m_normals;
-}
-
-std::vector<VertexPoint> OBJReader::GetVertexPoints()
-{
-    return m_vertexPoints;
 }
