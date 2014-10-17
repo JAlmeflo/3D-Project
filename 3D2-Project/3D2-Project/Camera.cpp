@@ -94,17 +94,25 @@ void Camera::Update(bool p_keys[256])
 	// w
 	if (p_keys[0x57])
 	{
+		D3DXVECTOR3 pos = GetPosition();
+		SetPosition(pos.x, pos.y, pos.z + 1);
 	}
 	//a
 	if (p_keys[0x41])
 	{
+		D3DXVECTOR3 pos = GetPosition();
+		SetPosition(pos.x - 1, pos.y, pos.z);
 	}
 	// s
 	if (p_keys[0x53])
 	{
+		D3DXVECTOR3 pos = GetPosition();
+		SetPosition(pos.x, pos.y, pos.z - 1);
 	}
 	// d
 	if (p_keys[0x44])
 	{
+		D3DXVECTOR3 pos = GetPosition();
+		SetPosition(pos.x + 1, pos.y, pos.z);
 	}
 }

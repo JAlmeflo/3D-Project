@@ -15,7 +15,6 @@ System::~System()
 
 bool System::Initialize()
 {
-	int screenWidth, screenHeight;
 	bool result;
 
 	screenWidth = 0;
@@ -77,6 +76,7 @@ void System::Run()
 		}
 		else
 		{
+			SetCursorPos(screenWidth / 2, screenHeight / 2);
 			m_input->Update();
 			result = Frame();
 			if (!result)
@@ -201,6 +201,7 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 
 	// Hide the mouse cursor.
 	ShowCursor(true);
+	SetCursorPos(screenWidth / 2, screenHeight / 2);
 }
 
 void System::ShutdownWindows()

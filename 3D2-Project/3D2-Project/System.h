@@ -24,6 +24,7 @@ private:
 	LPCSTR m_applicationName;
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
+	int screenWidth, screenHeight;
 
 	Input* m_input;
 	Graphics* m_graphics;
