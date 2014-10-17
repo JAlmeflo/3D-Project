@@ -17,7 +17,8 @@ bool Input::Initialize()
 		m_keys[i] = false;
 	}
 
-	return true;
+	m_publisher = Publisher();
+	return m_publisher.Initialize();
 }
 
 void Input::KeyDown(unsigned int input)
@@ -33,4 +34,9 @@ void Input::KeyUp(unsigned int input)
 bool Input::IsKeyDown(unsigned int key)
 {
 	return m_keys[key];
+}
+
+void Input::Update()
+{
+	m_publisher.Update(m_keys);
 }

@@ -10,11 +10,14 @@ Camera::Camera()
 	m_rotationX = 0.0f;
 	m_rotationY = 0.0f;
 	m_rotationZ = 0.0f;
+
+	Publisher::AddSubscriber(this);
 }
 
 
 Camera::~Camera()
 {
+	Publisher::Unsubscribe(this);
 }
 
 void Camera::SetPosition(float x, float y, float z)
@@ -79,4 +82,29 @@ void Camera::Render()
 void Camera::GetViewMatrix(D3DXMATRIX& viewMatrix)
 {
 	viewMatrix = m_viewMatrix;
+}
+
+void Camera::Update(bool p_keys[256])
+{
+	// w = 0x57
+	// a = 0x41
+	// s = 0x53
+	// d = 0x44
+
+	// w
+	if (p_keys[0x57])
+	{
+	}
+	//a
+	if (p_keys[0x41])
+	{
+	}
+	// s
+	if (p_keys[0x53])
+	{
+	}
+	// d
+	if (p_keys[0x44])
+	{
+	}
 }

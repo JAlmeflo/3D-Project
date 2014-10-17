@@ -77,6 +77,7 @@ void System::Run()
 		}
 		else
 		{
+			m_input->Update();
 			result = Frame();
 			if (!result)
 			{

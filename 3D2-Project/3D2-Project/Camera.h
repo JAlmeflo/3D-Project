@@ -1,8 +1,10 @@
 #pragma once
 
 #include <D3DX10math.h>
+#include "Subscriber.h"
+#include "Publisher.h"
 
-class Camera
+class Camera : public Subscriber
 {
 public:
 	Camera();
@@ -16,6 +18,8 @@ public:
 
 	void Render();
 	void GetViewMatrix(D3DXMATRIX&);
+
+	void Update(bool p_keys[256]);
 private:
 	float m_positionX, m_positionY, m_positionZ;
 	float m_rotationX, m_rotationY, m_rotationZ;
