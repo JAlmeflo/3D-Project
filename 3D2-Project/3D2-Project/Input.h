@@ -16,6 +16,7 @@ public:
 	bool IsKeyDown(unsigned int);
 
 	void Update();
+	void UpdateMouse(int p_x, int p_y);
 private:
 	bool m_keys[256];
 	Publisher m_publisher;

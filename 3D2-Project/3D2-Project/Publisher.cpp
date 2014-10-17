@@ -48,3 +48,11 @@ void Publisher::Update(bool p_keys[256])
 		m_subscribers[i]->Update(p_keys);
 	}
 }
+
+void Publisher::UpdateMouse(int p_x, int p_y)
+{
+	for (int i = 0; i < m_subscribers.size(); i++)
+	{
+		m_subscribers[i]->UpdateMouse(p_x, p_y);
+	}
+}

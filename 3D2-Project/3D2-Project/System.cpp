@@ -76,7 +76,7 @@ void System::Run()
 		}
 		else
 		{
-			SetCursorPos(screenWidth / 2, screenHeight / 2);
+			//SetCursorPos(screenWidth / 2, screenHeight / 2);
 			m_input->Update();
 			result = Frame();
 			if (!result)
@@ -100,6 +100,11 @@ LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPA
 		{
 			m_input->KeyUp((unsigned int)wparam);
 			return 0;
+		}
+		case WM_MOUSEMOVE:
+		{
+			m_input->UpdateMouse(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
+			break;
 		}
 		default:
 		{

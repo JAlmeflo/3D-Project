@@ -16,6 +16,7 @@ public:
 	static bool Unsubscribe(Subscriber* p_subscriber);
 
 	void Update(bool p_keys[256]);
+	void UpdateMouse(int p_x, int p_y);
 private:
 	static std::vector<Subscriber*> m_subscribers;
 };

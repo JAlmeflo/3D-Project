@@ -12,6 +12,9 @@ Camera::Camera()
 	m_rotationZ = 0.0f;
 
 	Publisher::AddSubscriber(this);
+	m_lastX = MAXINT;
+	m_lastY = MAXINT;
+	m_leftMouseDown = false;
 }
 
 
@@ -115,4 +118,26 @@ void Camera::Update(bool p_keys[256])
 		D3DXVECTOR3 pos = GetPosition();
 		SetPosition(pos.x + 1, pos.y, pos.z);
 	}
+
+	m_leftMouseDown = p_keys[VK_SPACE];
+}
+
+void Camera::UpdateMouse(int p_x, int p_y)
+{
+	if (m_leftMouseDown)
+	{
+		int a = 0;
+	}
+	if (m_lastX == MAXINT || !m_leftMouseDown)
+	{
+		m_lastX = p_x;
+		m_lastY = p_y;
+		return;
+	}
+	
+	D3DXVECTOR3 pos = GetPosition();
+	SetPosition(pos.x + (p_x - m_lastX), pos.y + (-1) * (p_y - m_lastY), pos.z);
+
+	m_lastX = p_x;
+	m_lastY = p_y;
 }

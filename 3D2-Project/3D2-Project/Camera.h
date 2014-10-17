@@ -20,9 +20,12 @@ public:
 	void GetViewMatrix(D3DXMATRIX&);
 
 	void Update(bool p_keys[256]);
+	void UpdateMouse(int p_x, int p_y);
 private:
 	float m_positionX, m_positionY, m_positionZ;
 	float m_rotationX, m_rotationY, m_rotationZ;
 	D3DXMATRIX m_viewMatrix;
+	int m_lastX, m_lastY;
+	bool m_leftMouseDown;
 };
 

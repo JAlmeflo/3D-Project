@@ -40,3 +40,8 @@ void Input::Update()
 {
 	m_publisher.Update(m_keys);
 }
+
+void Input::UpdateMouse(int p_x, int p_y)
+{
+	m_publisher.UpdateMouse(p_x, p_y);
+}
