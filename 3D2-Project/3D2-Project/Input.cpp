@@ -16,7 +16,7 @@ bool Input::Initialize()
 	{
 		m_keys[i] = false;
 	}
-
+	m_firstUpdate = true;
 	m_publisher = Publisher();
 	return m_publisher.Initialize();
 }
@@ -36,12 +36,19 @@ bool Input::IsKeyDown(unsigned int key)
 	return m_keys[key];
 }
 
-void Input::Update()
+void Input::Update(float deltaTime)
 {
-	m_publisher.Update(m_keys);
+	m_publisher.Update(m_keys, deltaTime);
 }
 
-void Input::UpdateMouse(int p_x, int p_y)
+void Input::UpdateMouse(int p_x, int p_y, float deltaTime)
 {
-	m_publisher.UpdateMouse(p_x, p_y);
+	if (!m_firstUpdate)
+	{
+ 		m_publisher.UpdateMouse(p_x, p_y, deltaTime);
+	}
+	else
+	{
+		m_firstUpdate = false;
+	}
 }

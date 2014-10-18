@@ -19,6 +19,8 @@ public:
 	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
 private:
 	bool Frame();
+	bool Render(float deltaTime);
+	bool Update(float deltaTime);
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
 
@@ -26,6 +28,7 @@ private:
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
 	int screenWidth, screenHeight;
+	bool firstUpdate;
 
 	Input* m_input;
 	Graphics* m_graphics;

@@ -3,6 +3,7 @@
 #include <D3DX10math.h>
 #include "Subscriber.h"
 #include "Publisher.h"
+#include <iostream>
 
 class Camera : public Subscriber
 {
@@ -19,13 +20,11 @@ public:
 	void Render();
 	void GetViewMatrix(D3DXMATRIX&);
 
-	void Update(bool p_keys[256]);
-	void UpdateMouse(int p_x, int p_y);
+	void Update(bool p_keys[256], float deltaTime);
+	void UpdateMouse(int p_x, int p_y, float deltaTime);
 private:
 	float m_positionX, m_positionY, m_positionZ;
 	float m_rotationX, m_rotationY, m_rotationZ;
 	D3DXMATRIX m_viewMatrix;
-	int m_lastX, m_lastY;
-	bool m_leftMouseDown;
 };
 

@@ -20,6 +20,7 @@ bool System::Initialize()
 	screenWidth = 0;
 	screenHeight = 0;
 	InitializeWindows(screenWidth, screenHeight);
+	firstUpdate = true;
 
 	//Input
 	m_input = new Input();
@@ -58,6 +59,10 @@ void System::Run()
 {
 	MSG msg;
 	bool done, result;
+	__int64 prevTimeStamp = 0;
+	__int64 cntsPerSec = 0;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&cntsPerSec);
+	float secsPerCnt = 1.0f / (float)cntsPerSec;
 	
 	ZeroMemory(&msg, sizeof(MSG));
 
@@ -76,13 +81,27 @@ void System::Run()
 		}
 		else
 		{
-			//SetCursorPos(screenWidth / 2, screenHeight / 2);
-			m_input->Update();
-			result = Frame();
-			if (!result)
+			__int64 currTimeStamp = 0;
+			QueryPerformanceCounter((LARGE_INTEGER*)&currTimeStamp);
+			float dt = (currTimeStamp - prevTimeStamp) * secsPerCnt;
+
+			if (firstUpdate)
+				firstUpdate = false;
+			else
 			{
-				done = true;
+				result = Update(dt);
+				if (!result)
+				{
+					done = true;
+				}
+				result = Render(dt);
+				if (!result)
+				{
+					done = true;
+				}
 			}
+
+			prevTimeStamp = currTimeStamp;
 		}
 	}
 }
@@ -100,11 +119,6 @@ LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPA
 		{
 			m_input->KeyUp((unsigned int)wparam);
 			return 0;
-		}
-		case WM_MOUSEMOVE:
-		{
-			m_input->UpdateMouse(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
-			break;
 		}
 		default:
 		{
@@ -130,6 +144,40 @@ bool System::Frame()
 		return false;
 	}
 
+	return true;
+}
+
+bool System::Render(float deltaTime)
+{
+	if (!m_graphics->Frame())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool System::Update(float deltaTime)
+{
+	m_input->Update(deltaTime);
+
+	if (m_input->IsKeyDown(VK_ESCAPE))
+	{
+		return false;
+	}
+
+	LPRECT Rect = new RECT();
+	GetWindowRect(m_hwnd, Rect);
+	LPPOINT mousePos = new POINT();
+	GetCursorPos(mousePos);
+
+	int centerX = (Rect->left + Rect->right) * 0.5f;
+	int centerY = (Rect->top + Rect->bottom) * 0.5f;
+	D3DXVECTOR2 mouseMovement = D3DXVECTOR2(mousePos->x - centerX, centerY - mousePos->y);
+
+	m_input->UpdateMouse(mouseMovement.x, mouseMovement.y, deltaTime);
+	
+	SetCursorPos(centerX, centerY);
 	return true;
 }
 
@@ -206,7 +254,12 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 
 	// Hide the mouse cursor.
 	ShowCursor(true);
-	SetCursorPos(screenWidth / 2, screenHeight / 2);
+	LPRECT Rect = new RECT();
+	GetWindowRect(m_hwnd, Rect);
+	int centerX = (Rect->left + Rect->right) * 0.5f;
+	int centerY = (Rect->top + Rect->bottom) * 0.5f;
+	SetCursorPos(centerX, centerY);
+	
 }
 
 void System::ShutdownWindows()

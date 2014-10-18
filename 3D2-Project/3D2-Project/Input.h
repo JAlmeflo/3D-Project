@@ -15,10 +15,11 @@ public:
 
 	bool IsKeyDown(unsigned int);
 
-	void Update();
-	void UpdateMouse(int p_x, int p_y);
+	void Update(float deltaTime);
+	void UpdateMouse(int p_x, int p_y, float deltaTime);
 private:
 	bool m_keys[256];
+	bool m_firstUpdate;
 	Publisher m_publisher;
 };
 

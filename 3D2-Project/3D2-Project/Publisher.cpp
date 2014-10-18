@@ -41,18 +41,18 @@ bool Publisher::Unsubscribe(Subscriber* p_subscriber)
 	return false;
 }
 
-void Publisher::Update(bool p_keys[256])
+void Publisher::Update(bool p_keys[256], float deltaTime)
 {
 	for (int i = 0; i < m_subscribers.size(); i++)
 	{
-		m_subscribers[i]->Update(p_keys);
+		m_subscribers[i]->Update(p_keys, deltaTime);
 	}
 }
 
-void Publisher::UpdateMouse(int p_x, int p_y)
+void Publisher::UpdateMouse(int p_x, int p_y, float deltaTime)
 {
 	for (int i = 0; i < m_subscribers.size(); i++)
 	{
-		m_subscribers[i]->UpdateMouse(p_x, p_y);
+		m_subscribers[i]->UpdateMouse(p_x, p_y, deltaTime);
 	}
 }

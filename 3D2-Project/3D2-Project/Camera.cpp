@@ -12,9 +12,6 @@ Camera::Camera()
 	m_rotationZ = 0.0f;
 
 	Publisher::AddSubscriber(this);
-	m_lastX = MAXINT;
-	m_lastY = MAXINT;
-	m_leftMouseDown = false;
 }
 
 
@@ -87,57 +84,84 @@ void Camera::GetViewMatrix(D3DXMATRIX& viewMatrix)
 	viewMatrix = m_viewMatrix;
 }
 
-void Camera::Update(bool p_keys[256])
+void Camera::Update(bool p_keys[256], float deltaTime)
 {
 	// w = 0x57
 	// a = 0x41
 	// s = 0x53
 	// d = 0x44
+	D3DXVECTOR3 pos = GetPosition(); 
+	D3DXVECTOR3 rot = GetRotation();
+	D3DXVECTOR3 forward;
+	D3DXVECTOR3 right;
+	D3DXVECTOR3 up;
+	float yaw, pitch, roll;
+	D3DXMATRIX rotationMatrix;
+
+	pitch = m_rotationX * 0.0174532925f;
+	yaw = m_rotationY * 0.0174532925f;
+	roll = m_rotationZ * 0.0174532925f;
+
+	forward.x = 0.0f;
+	forward.y = 0.0f;
+	forward.z = 1.0f;
+
+	right.x = 1.0f;
+	right.y = 0.0f;
+	right.z = 0.0f;
+
+	up.x = 0.0f;
+	up.y = 1.0f;
+	up.z = 0.0f;
+
+	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll);
+	D3DXVec3TransformCoord(&forward, &forward, &rotationMatrix);
+	D3DXVec3TransformCoord(&right, &right, &rotationMatrix);
+	D3DXVec3TransformCoord(&up, &up, &rotationMatrix);
+
+	float sense = 50 * deltaTime;
 
 	// w
 	if (p_keys[0x57])
 	{
-		D3DXVECTOR3 pos = GetPosition();
-		SetPosition(pos.x, pos.y, pos.z + 1);
+		SetPosition(pos.x + sense * forward.x, pos.y + sense * forward.y, pos.z + sense * forward.z);
 	}
 	//a
 	if (p_keys[0x41])
 	{
-		D3DXVECTOR3 pos = GetPosition();
-		SetPosition(pos.x - 1, pos.y, pos.z);
+		SetPosition(pos.x - sense * right.x, pos.y - sense * right.y, pos.z - sense * right.z);
 	}
 	// s
 	if (p_keys[0x53])
 	{
-		D3DXVECTOR3 pos = GetPosition();
-		SetPosition(pos.x, pos.y, pos.z - 1);
+		SetPosition(pos.x - sense * forward.x, pos.y - sense * forward.y, pos.z - sense * forward.z);
 	}
 	// d
 	if (p_keys[0x44])
 	{
-		D3DXVECTOR3 pos = GetPosition();
-		SetPosition(pos.x + 1, pos.y, pos.z);
+		SetPosition(pos.x + sense * right.x, pos.y + sense * right.y, pos.z + sense * right.z);
 	}
-
-	m_leftMouseDown = p_keys[VK_SPACE];
+	// Space
+	if (p_keys[VK_SPACE])
+	{
+		SetPosition(pos.x + sense * up.x, pos.y + sense * up.y, pos.z + sense * up.z);
+	}
+	// Ctrl
+	if (p_keys[VK_CONTROL])
+	{
+		SetPosition(pos.x - sense * up.x, pos.y - sense * up.y, pos.z - sense * up.z);
+	}
 }
 
-void Camera::UpdateMouse(int p_x, int p_y)
+void Camera::UpdateMouse(int p_x, int p_y, float deltaTime)
 {
-	if (m_leftMouseDown)
-	{
-		int a = 0;
-	}
-	if (m_lastX == MAXINT || !m_leftMouseDown)
-	{
-		m_lastX = p_x;
-		m_lastY = p_y;
-		return;
-	}
-	
-	D3DXVECTOR3 pos = GetPosition();
-	SetPosition(pos.x + (p_x - m_lastX), pos.y + (-1) * (p_y - m_lastY), pos.z);
+	//D3DXVECTOR3 pos = GetPosition();
+	//SetPosition(pos.x + p_x * deltaTime, pos.y + p_y * deltaTime , pos.z);
 
-	m_lastX = p_x;
-	m_lastY = p_y;
+	D3DXVECTOR3 rot = GetRotation();
+	SetRotation(rot.x - 0.1 * p_y, rot.y + 0.1 * p_x, rot.z);
+
+	//std::cout << p_x << "/" << p_y << std::endl;
+	//m_lastX = p_x;
+	//m_lastY = p_y;
 }
