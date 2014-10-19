@@ -27,7 +27,7 @@ private :
 
 	D3DClass* m_D3D;
 	Camera* m_camera;
-	Model* m_model;
+	std::vector<Model*> m_models;
 	LightShader* m_lightShader;
 	Light* m_light;
 };

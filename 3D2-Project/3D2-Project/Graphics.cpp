@@ -5,7 +5,7 @@ Graphics::Graphics()
 {
 	m_D3D = 0;
 	m_camera = 0;
-	m_model = 0;
+	m_models = std::vector<Model*>();
 	m_lightShader = 0;
 	m_light = 0;
 }
@@ -29,17 +29,28 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the camera
 	m_camera = new Camera();
-	m_camera->SetPosition(0.0f, 1.0f, -50.0f);
+	m_camera->SetPosition(0.0f, 10.0f, -50.0f);
 	//m_camera->SetRotation(0.0f, 20.0f, 0.0f);
 
 	// Create the model
-	m_model = new Model();
-	result = m_model->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Van.obj", "../3D2-Project/Textures/Van.jpg");
+	m_models = std::vector<Model*>();
+	Model* ground = new Model();
+	result = ground->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Ground.obj", "../3D2-Project/Textures/Ground.jpg");
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
 		return false;
 	}
+	Model* van = new Model();
+	result = van->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Van.obj", "../3D2-Project/Textures/Van.jpg");
+	if (!result)
+	{
+		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
+		return false;
+	}
+	
+	m_models.push_back(ground);
+	m_models.push_back(van);
 
 	// Create the lightShader
 	m_lightShader = new LightShader();
@@ -53,7 +64,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Create the light object
 	m_light = new Light();
 	m_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	m_light->SetDirection(0.0f, 0.0f, 1.0f);
+	m_light->SetDirection(0.0f, -0.5f, 1.0f);
 
 	return true;
 }
@@ -70,9 +81,12 @@ void Graphics::Shutdown()
 	m_lightShader = 0;
 
 	// Shutdown model
-	m_model->Shutdown();
-	delete m_model;
-	m_model = 0;
+	for (int i = 0; i < m_models.size(); i++)
+	{
+		m_models[i]->Shutdown();
+		delete m_models[i];
+	}
+	m_models.clear();
 
 	// Shutdown camera
 	delete m_camera;
@@ -95,7 +109,7 @@ bool Graphics::Frame()
 		rotation -= 2 * D3DX_PI;
 	}
 
-	//m_light->Rotate(rotation);
+	m_light->Rotate(rotation);
 	result = Render(rotation);
 	if (!result)
 	{
@@ -120,15 +134,18 @@ bool Graphics::Render(float rotation)
 
 	//D3DXMatrixRotationY(&worldMatrix, rotation);
 
-	m_model->Render(m_D3D->GetDeviceContext());
-
-	result = m_lightShader->Render(m_D3D->GetDeviceContext(), m_model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
-		m_model->GetTexture(), m_light->GetDirection(), m_light->GetDiffuseColor());
-	if (!result)
+	for (int i = 0; i < m_models.size(); i++)
 	{
-		return false;
-	}
+		m_models[i]->Render(m_D3D->GetDeviceContext());
 
+
+		result = m_lightShader->Render(m_D3D->GetDeviceContext(), m_models[i]->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_models[i]->GetTexture(), m_light->GetDirection(), m_light->GetDiffuseColor());
+		if (!result)
+		{
+			return false;
+		}
+	}
 	// Present the rendered scene to the screen
 	m_D3D->EndScene();
 

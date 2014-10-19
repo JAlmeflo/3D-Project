@@ -36,7 +36,7 @@ float4 main(PixelInputType input) : SV_TARGET
 
 	color = saturate(diffuseColor * lightIntensity);
 
-	color = color * textureColor;
+	color = (color + 0.1f) * textureColor;
 
     return color;
 }

@@ -253,7 +253,7 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	SetFocus(m_hwnd);
 
 	// Hide the mouse cursor.
-	ShowCursor(true);
+	ShowCursor(false);
 	LPRECT Rect = new RECT();
 	GetWindowRect(m_hwnd, Rect);
 	int centerX = (Rect->left + Rect->right) * 0.5f;

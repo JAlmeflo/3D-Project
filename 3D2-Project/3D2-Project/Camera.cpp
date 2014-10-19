@@ -86,10 +86,6 @@ void Camera::GetViewMatrix(D3DXMATRIX& viewMatrix)
 
 void Camera::Update(bool p_keys[256], float deltaTime)
 {
-	// w = 0x57
-	// a = 0x41
-	// s = 0x53
-	// d = 0x44
 	D3DXVECTOR3 pos = GetPosition(); 
 	D3DXVECTOR3 rot = GetRotation();
 	D3DXVECTOR3 forward;
@@ -117,7 +113,7 @@ void Camera::Update(bool p_keys[256], float deltaTime)
 	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll);
 	D3DXVec3TransformCoord(&forward, &forward, &rotationMatrix);
 	D3DXVec3TransformCoord(&right, &right, &rotationMatrix);
-	D3DXVec3TransformCoord(&up, &up, &rotationMatrix);
+	//D3DXVec3TransformCoord(&up, &up, &rotationMatrix);
 
 	float sense = 50 * deltaTime;
 
@@ -155,13 +151,6 @@ void Camera::Update(bool p_keys[256], float deltaTime)
 
 void Camera::UpdateMouse(int p_x, int p_y, float deltaTime)
 {
-	//D3DXVECTOR3 pos = GetPosition();
-	//SetPosition(pos.x + p_x * deltaTime, pos.y + p_y * deltaTime , pos.z);
-
 	D3DXVECTOR3 rot = GetRotation();
 	SetRotation(rot.x - 0.1 * p_y, rot.y + 0.1 * p_x, rot.z);
-
-	//std::cout << p_x << "/" << p_y << std::endl;
-	//m_lastX = p_x;
-	//m_lastY = p_y;
 }

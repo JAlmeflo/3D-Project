@@ -60,7 +60,7 @@ void OBJReader::ReadVertexPos(std::ifstream& file)
 	file >> vertex.z;
 
 	// Go from right to left handed coordinates
-	//vertex.z *= -1; ERRROR value is correct in the first place
+	//vertex.z *= -1; //ERRROR value is correct in the first place
 
 	m_positions.push_back(vertex);
 }
