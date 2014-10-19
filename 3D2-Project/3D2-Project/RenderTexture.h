@@ -20,4 +20,3 @@ private:
 	ID3D11RenderTargetView* m_renderTargetView;
 	ID3D11ShaderResourceView* m_shaderResourceView;
 };
-
