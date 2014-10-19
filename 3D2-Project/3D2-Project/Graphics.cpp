@@ -109,7 +109,7 @@ bool Graphics::Frame()
 		rotation -= 2 * D3DX_PI;
 	}
 
-	m_light->Rotate(rotation);
+	//m_light->Rotate(rotation);
 	result = Render(rotation);
 	if (!result)
 	{
