@@ -63,6 +63,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the light object
 	m_light = new Light();
+	m_light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	m_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	m_light->SetDirection(0.0f, -0.5f, 1.0f);
 
@@ -109,7 +110,7 @@ bool Graphics::Frame()
 		rotation -= 2 * D3DX_PI;
 	}
 
-	//m_light->Rotate(rotation);
+	m_light->Rotate(rotation);
 	result = Render(rotation);
 	if (!result)
 	{
@@ -140,7 +141,7 @@ bool Graphics::Render(float rotation)
 
 
 		result = m_lightShader->Render(m_D3D->GetDeviceContext(), m_models[i]->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			m_models[i]->GetTexture(), m_light->GetDirection(), m_light->GetDiffuseColor());
+			m_models[i]->GetTexture(), m_light->GetDirection(), m_light->GetAmbientColor(), m_light->GetDiffuseColor());
 		if (!result)
 		{
 			return false;

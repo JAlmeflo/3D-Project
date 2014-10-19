@@ -8,6 +8,7 @@ SamplerState samplerType;
 
 cbuffer LightBuffer
 {
+	float4 ambientColor;
 	float4 diffuseColor;
 	float3 lightDirection;
 	float padding;
@@ -34,9 +35,16 @@ float4 main(PixelInputType input) : SV_TARGET
 
 	lightIntensity = saturate(dot(input.normal, lightDir));
 
-	color = saturate(diffuseColor * lightIntensity);
+	color = ambientColor;
+
+	if (lightIntensity > 0.0f)
+	{
+		color += (diffuseColor * lightIntensity);
+	}
+
+	color = saturate(color);
 	
-	color = (color + 0.1f) * textureColor;
+	color = color * textureColor;
 
 	return color;
 }
