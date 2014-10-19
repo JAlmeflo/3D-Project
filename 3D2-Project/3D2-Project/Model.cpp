@@ -201,52 +201,9 @@ void Model::ReleaseTexture()
 
 bool Model::LoadModel(char* filename)
 {
-	
 	reader.Load(filename);
 
     return true;
-	ifstream fin;
-	char input;
-	char* str = new char();
-	
-	fin.open(filename);
-	if (fin.fail())
-	{
-		return false;
-	}
-
-	fin.get(input);
-	while (input != ':')
-	{
-		fin.get(input);
-	}
-
-	fin >> m_vertexCount;
-	m_indexCount = m_vertexCount;
-
-	m_model = new ModelType[m_vertexCount];
-	
-	//while (input != ':')
-	//{
-	//	fin.get(input);
-	//}
-	//fin.get(input);
-	//fin.get(input);
-	fin >> str;
-	//fin >> str;
-	//fin >> str;
-
-	for (int i = 0; i < m_vertexCount; i++)
-	{
-
-		fin >> m_model[i].x >> m_model[i].y >> m_model[i].z;
-		fin >> m_model[i].tu >> m_model[i].tv;
-		fin >> m_model[i].nx >> m_model[i].ny >> m_model[i].nz;
-	}
-
-	fin.close();
-
-	return true;
 }
 
 void Model::ReleaseModel()

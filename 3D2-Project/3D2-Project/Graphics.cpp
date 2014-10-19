@@ -6,7 +6,9 @@ Graphics::Graphics()
 	m_D3D = 0;
 	m_camera = 0;
 	m_models = std::vector<Model*>();
-	m_lightShader = 0;
+	m_renderTexture = 0;
+	m_depthShader = 0;
+	m_shadowShader = 0;
 	m_light = 0;
 }
 
@@ -34,6 +36,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the model
 	m_models = std::vector<Model*>();
+
+	// Ground
 	Model* ground = new Model();
 	result = ground->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Ground.obj", "../3D2-Project/Textures/Ground.jpg");
 	if (!result)
@@ -41,6 +45,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
 		return false;
 	}
+	//Van
 	Model* van = new Model();
 	result = van->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Van.obj", "../3D2-Project/Textures/Van.jpg");
 	if (!result)
@@ -52,20 +57,26 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_models.push_back(ground);
 	m_models.push_back(van);
 
-	// Create the lightShader
-	m_lightShader = new LightShader();
-	result = m_lightShader->Initialize(m_D3D->GetDevice(), hwnd);
+	// Create the light object
+	m_light = new Light();
+	m_light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	m_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	m_light->SetLookAt(0.0f, 0.0, 0.0f);
+	m_light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+
+	// Create the shaders
+	m_renderTexture = new RenderTexture();
+	result = m_renderTexture->Initialize(m_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
+
+	m_shader = new Shader();
+	result = m_shader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the texture shader object.", "Error", MB_OK);
 		return false;
 	}
 
-	// Create the light object
-	m_light = new Light();
-	m_light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	m_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	m_light->SetDirection(0.0f, -0.5f, 1.0f);
+
 
 	return true;
 }
@@ -77,9 +88,9 @@ void Graphics::Shutdown()
 	m_light = 0;
 
 	// Shutdown lightShader
-	m_lightShader->Shutdown();
-	delete m_lightShader;
-	m_lightShader = 0;
+	m_shader->Shutdown();
+	delete m_shader;
+	m_shader = 0;
 
 	// Shutdown model
 	for (int i = 0; i < m_models.size(); i++)
@@ -99,7 +110,7 @@ void Graphics::Shutdown()
 	m_D3D = 0;
 }
 
-bool Graphics::Frame()
+bool Graphics::Frame(float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
 {
 	bool result;
 	static float rotation = 0.0f;
@@ -110,7 +121,7 @@ bool Graphics::Frame()
 		rotation -= 2 * D3DX_PI;
 	}
 
-	m_light->Rotate(rotation);
+	//m_light->Rotate(rotation);
 	result = Render(rotation);
 	if (!result)
 	{
@@ -120,28 +131,44 @@ bool Graphics::Frame()
 	return true;
 }
 
+bool Graphics::RenderSceneToTexture()
+{
+	return true;
+}
+
 bool Graphics::Render(float rotation)
 {
 	D3DXMATRIX viewMatrix, worldMatrix, projectionMatrix;
+	D3DXMATRIX lightViewMatrix, lightProjectionMatrix;
 	bool result;
+
+	result = RenderSceneToTexture();
+	if (!result)
+	{
+		return false;
+	}
 
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	m_camera->Render();
 
+	m_light->GenerateViewMatrix();
+
 	m_camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
-	//D3DXMatrixRotationY(&worldMatrix, rotation);
+	m_light->GetViewMatrix(lightViewMatrix);
+	m_light->GetProjectionMatrix(lightProjectionMatrix);
 
 	for (int i = 0; i < m_models.size(); i++)
 	{
 		m_models[i]->Render(m_D3D->GetDeviceContext());
+		
 
-
-		result = m_lightShader->Render(m_D3D->GetDeviceContext(), m_models[i]->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			m_models[i]->GetTexture(), m_light->GetDirection(), m_light->GetAmbientColor(), m_light->GetDiffuseColor());
+		result = m_shader->Render(m_D3D->GetDeviceContext(), m_models[i]->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			lightViewMatrix, lightProjectionMatrix, m_models[i]->GetTexture(), "ERROR FIX", m_light->GetPosition(),
+			m_light->GetAmbientColor(), m_light->GetDiffuseColor());
 		if (!result)
 		{
 			return false;
