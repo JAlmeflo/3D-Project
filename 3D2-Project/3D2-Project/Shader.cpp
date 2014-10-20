@@ -364,7 +364,7 @@ bool Shader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX 
 
 	bufferNumber = 1;
 
-	deviceContext->VSGetConstantBuffers(bufferNumber, 1, &m_lightBuffer2);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_lightBuffer2);
 
 	return true;
 }

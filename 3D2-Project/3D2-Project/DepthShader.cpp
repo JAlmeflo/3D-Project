@@ -53,7 +53,6 @@ bool DepthShader::InitializeShader(ID3D11Device* device, HWND hwnd, LPCSTR vsFil
 	ID3D10Blob* errorMessage;
 	ID3D10Blob* vertexShaderBuffer;
 	ID3D10Blob* pixelShaderBuffer;
-
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[1];
 	unsigned int numElements;
 	D3D11_BUFFER_DESC matrixBufferDesc;

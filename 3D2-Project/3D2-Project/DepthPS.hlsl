@@ -17,7 +17,7 @@ float4 main(PixelInputType input) : SV_TARGET
 
 	depthValue = input.depthPosition.z / input.depthPosition.w;
 
-	color = float4(1.0f * depthValue, 1.0f * depthValue, 1.0f * depthValue, 1.0f);
+	color = float4(depthValue, depthValue, depthValue, 1.0f);
 
 	return color;
 }

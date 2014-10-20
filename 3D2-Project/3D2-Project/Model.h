@@ -35,6 +35,9 @@ public:
 
 	int GetIndexCount();
 	ID3D11ShaderResourceView* GetTexture();
+
+	void SetPosition(float, float, float);
+	D3DXVECTOR3 GetPosition();
 private:
 	bool InitializeBuffers(ID3D11Device*);
 	void ShutdownBuffers();
@@ -51,5 +54,6 @@ private:
 	Texture* m_texture;
 	ModelType* m_model;
 	OBJReader reader;
+	D3DXVECTOR3 m_position;
 };
 

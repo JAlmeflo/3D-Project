@@ -45,6 +45,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
 		return false;
 	}
+	ground->SetPosition(0, 0, 0);
+
 	//Van
 	Model* van = new Model();
 	result = van->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Van.obj", "../3D2-Project/Textures/Van.jpg");
@@ -53,23 +55,49 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
 		return false;
 	}
+	van->SetPosition(0, 0, 0);
+
+	//Van
+	Model* van2 = new Model();
+	result = van2->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Van.obj", "../3D2-Project/Textures/Van.jpg");
+	if (!result)
+	{
+		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
+		return false;
+	}
+	van2->SetPosition(10, 0, 10);
 	
 	m_models.push_back(ground);
 	m_models.push_back(van);
+	m_models.push_back(van2);
 
 	// Create the light object
 	m_light = new Light();
 	m_light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	m_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	m_light->SetLookAt(0.0f, 0.0, 0.0f);
+	m_light->SetPosition(0.0f, 30.0f, -10.0f);
 	m_light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 
 	// Create the shaders
 	m_renderTexture = new RenderTexture();
 	result = m_renderTexture->Initialize(m_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
+	if (!result)
+	{
+		MessageBox(hwnd, "Could not initialize the render texture object.", "Error", MB_OK);
+		return false;
+	}
 
-	m_shader = new Shader();
-	result = m_shader->Initialize(m_D3D->GetDevice(), hwnd);
+	m_depthShader = new DepthShader();
+	result = m_depthShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, "Could not initialize the depth shader object.", "Error", MB_OK);
+		return false;
+	}
+
+	m_shadowShader = new Shader();
+	result = m_shadowShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the texture shader object.", "Error", MB_OK);
@@ -84,13 +112,22 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 void Graphics::Shutdown()
 {
 	// Shutdown light
+	m_light->~Light();
 	delete m_light;
 	m_light = 0;
 
 	// Shutdown lightShader
-	m_shader->Shutdown();
-	delete m_shader;
-	m_shader = 0;
+	m_shadowShader->Shutdown();
+	delete m_shadowShader;
+	m_shadowShader = 0;
+
+	m_depthShader->Shutdown();
+	delete m_depthShader;
+	m_depthShader = 0;
+
+	m_renderTexture->Shutdown();
+	delete m_renderTexture;
+	m_renderTexture = 0;
 
 	// Shutdown model
 	for (int i = 0; i < m_models.size(); i++)
@@ -110,7 +147,7 @@ void Graphics::Shutdown()
 	m_D3D = 0;
 }
 
-bool Graphics::Frame(float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
+bool Graphics::Frame()
 {
 	bool result;
 	static float rotation = 0.0f;
@@ -121,7 +158,7 @@ bool Graphics::Frame(float posX, float posY, float posZ, float rotX, float rotY,
 		rotation -= 2 * D3DX_PI;
 	}
 
-	//m_light->Rotate(rotation);
+	m_light->Rotate(rotation);
 	result = Render(rotation);
 	if (!result)
 	{
@@ -133,6 +170,39 @@ bool Graphics::Frame(float posX, float posY, float posZ, float rotX, float rotY,
 
 bool Graphics::RenderSceneToTexture()
 {
+	D3DXMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix, translateMatrix;
+	D3DXVECTOR3 pos;
+	bool result;
+
+	// render texture
+	m_renderTexture->SetRenderTarget(m_D3D->GetDeviceContext());
+	m_renderTexture->ClearRenderTarget(m_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// get matrices
+	m_light->GenerateViewMatrix();
+
+	m_light->GetViewMatrix(lightViewMatrix);
+	m_light->GetProjectionMatrix(lightProjectionMatrix);
+
+	// for loop here
+	for (int i = 0; i < m_models.size(); i++)
+	{
+		m_D3D->GetWorldMatrix(worldMatrix);
+
+		pos = m_models[i]->GetPosition();
+		D3DXMatrixTranslation(&worldMatrix, pos.x, pos.y, pos.z);
+		m_models[i]->Render(m_D3D->GetDeviceContext());
+		
+		result = m_depthShader->Render(m_D3D->GetDeviceContext(), m_models[i]->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+		if (!result)
+		{
+			return false;
+		}
+	}
+
+	m_D3D->SetBackBufferRenderTarget();
+	m_D3D->ResetViewport();
+
 	return true;
 }
 
@@ -140,8 +210,10 @@ bool Graphics::Render(float rotation)
 {
 	D3DXMATRIX viewMatrix, worldMatrix, projectionMatrix;
 	D3DXMATRIX lightViewMatrix, lightProjectionMatrix;
+	D3DXVECTOR3 pos;
 	bool result;
 
+	// rendedr scene to texture
 	result = RenderSceneToTexture();
 	if (!result)
 	{
@@ -163,16 +235,19 @@ bool Graphics::Render(float rotation)
 
 	for (int i = 0; i < m_models.size(); i++)
 	{
+		pos = m_models[i]->GetPosition();
+		D3DXMatrixTranslation(&worldMatrix, pos.x, pos.y, pos.z);
+
 		m_models[i]->Render(m_D3D->GetDeviceContext());
 		
-
-		result = m_shader->Render(m_D3D->GetDeviceContext(), m_models[i]->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			lightViewMatrix, lightProjectionMatrix, m_models[i]->GetTexture(), "ERROR FIX", m_light->GetPosition(),
+		result = m_shadowShader->Render(m_D3D->GetDeviceContext(), m_models[i]->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			lightViewMatrix, lightProjectionMatrix, m_models[i]->GetTexture(), m_renderTexture->GetShaderResourceView(), m_light->GetPosition(),
 			m_light->GetAmbientColor(), m_light->GetDiffuseColor());
 		if (!result)
 		{
 			return false;
 		}
+		m_D3D->GetWorldMatrix(worldMatrix);
 	}
 	// Present the rendered scene to the screen
 	m_D3D->EndScene();

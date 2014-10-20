@@ -34,6 +34,8 @@ void Light::Rotate(float rotation)
 {
 	float x = cos(rotation);
 	float y = sin(rotation);
+	
+	SetPosition(x * 50.0f, GetPosition().y, y * 50.0f);
 	//SetDirection(x, GetDirection().y, y);
 }
 

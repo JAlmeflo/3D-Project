@@ -63,6 +63,16 @@ float4 main(PixelInputType input) : SV_TARGET
 			}
 		}
 	}
+	else
+	{
+		lightIntensity = saturate(dot(input.normal, input.lightPos));
+
+		if (lightIntensity > 0.0f)
+		{
+			color += (diffuseColor * lightIntensity);
+			color = saturate(color);
+		}
+	}
 
 
 	textureColor = shaderTexture.Sample(samplerTypeWrap, input.tex);	

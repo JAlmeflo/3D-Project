@@ -63,6 +63,16 @@ ID3D11ShaderResourceView* Model::GetTexture()
 	return m_texture->GetTexture();
 }
 
+void Model::SetPosition(float x, float y, float z)
+{
+	m_position = D3DXVECTOR3(x, y, z);
+}
+
+D3DXVECTOR3 Model::GetPosition()
+{
+	return m_position;
+}
+
 bool Model::InitializeBuffers(ID3D11Device* device)
 {
 	VertexType* vertices;
