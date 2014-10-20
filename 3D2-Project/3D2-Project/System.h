@@ -3,8 +3,10 @@
 
 #include <Windows.h>
 #include <windowsx.h>
+#include <WinUser.h>
 #include "Input.h"
 #include "Graphics.h"
+#include <string>
 
 class System
 {
@@ -18,16 +20,17 @@ public:
 
 	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
 private:
-	bool Frame();
-	bool Render(float deltaTime);
+	bool Render();
 	bool Update(float deltaTime);
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
+	void SetWindowTitle();
 
 	LPCSTR m_applicationName;
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
 	int screenWidth, screenHeight;
+	float m_fps;
 	bool firstUpdate;
 
 	Input* m_input;

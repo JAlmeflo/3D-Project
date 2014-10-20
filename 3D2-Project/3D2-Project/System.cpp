@@ -84,7 +84,8 @@ void System::Run()
 			__int64 currTimeStamp = 0;
 			QueryPerformanceCounter((LARGE_INTEGER*)&currTimeStamp);
 			float dt = (currTimeStamp - prevTimeStamp) * secsPerCnt;
-
+			m_fps = 1 / dt;
+			SetWindowTitle();
 			if (firstUpdate)
 				firstUpdate = false;
 			else
@@ -94,7 +95,7 @@ void System::Run()
 				{
 					done = true;
 				}
-				result = Render(dt);
+				result = Render();
 				if (!result)
 				{
 					done = true;
@@ -127,27 +128,7 @@ LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPA
 	}
 }
 
-bool System::Frame()
-{
-	bool result;
-
-	//Input
-	if (m_input->IsKeyDown(VK_ESCAPE))
-	{
-		return false;
-	}
-
-	// Graphics
-	result = m_graphics->Frame();
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool System::Render(float deltaTime)
+bool System::Render()
 {
 	if (!m_graphics->Frame())
 	{
@@ -159,6 +140,8 @@ bool System::Render(float deltaTime)
 
 bool System::Update(float deltaTime)
 {
+	m_graphics->Update(deltaTime);
+
 	m_input->Update(deltaTime);
 
 	if (m_input->IsKeyDown(VK_ESCAPE))
@@ -304,4 +287,15 @@ LRESULT CALLBACK System::WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM
 			 return ApplicationHandle->MessageHandler(hwnd, umessage, wparam, lparam);
 		}
 	}
+}
+
+void System::SetWindowTitle()
+{
+	//LPCSTR text = "FPS:";
+	std::string text;
+	text = "FPS:   ";
+	text.append(std::to_string((int)m_fps));
+
+	
+	SetWindowTextA(m_hwnd, (LPCSTR)text.c_str());
 }

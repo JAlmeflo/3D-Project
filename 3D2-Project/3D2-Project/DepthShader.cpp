@@ -32,7 +32,7 @@ void DepthShader::Shutdown()
 	ShutdownShader();
 }
 
-bool DepthShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
+bool DepthShader::Render(ID3D11DeviceContext* deviceContext, int vertexCount, int instanceCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
 {
 	bool result;
 
@@ -42,7 +42,7 @@ bool DepthShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, D3D
 		return false;
 	}
 
-	RenderShader(deviceContext, indexCount);
+	RenderShader(deviceContext, vertexCount, instanceCount);
 
 	return true;
 }
@@ -53,7 +53,7 @@ bool DepthShader::InitializeShader(ID3D11Device* device, HWND hwnd, LPCSTR vsFil
 	ID3D10Blob* errorMessage;
 	ID3D10Blob* vertexShaderBuffer;
 	ID3D10Blob* pixelShaderBuffer;
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[1];
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
 	unsigned int numElements;
 	D3D11_BUFFER_DESC matrixBufferDesc;
 
@@ -116,6 +116,14 @@ bool DepthShader::InitializeShader(ID3D11Device* device, HWND hwnd, LPCSTR vsFil
 	polygonLayout[0].AlignedByteOffset = 0;
 	polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[0].InstanceDataStepRate = 0;
+
+	polygonLayout[1].SemanticName = "TEXCOORD";
+	polygonLayout[1].SemanticIndex = 0;
+	polygonLayout[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[1].InputSlot = 1;
+	polygonLayout[1].AlignedByteOffset = 0;
+	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	polygonLayout[1].InstanceDataStepRate = 1;
 
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
@@ -225,12 +233,13 @@ bool DepthShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMA
 	return true;
 }
 
-void DepthShader::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
+void DepthShader::RenderShader(ID3D11DeviceContext* deviceContext, int vertexCount, int instanceCount)
 {
 	deviceContext->IASetInputLayout(m_layout);
 
 	deviceContext->VSSetShader(m_vertexShader, NULL, 0);
 	deviceContext->PSSetShader(m_pixelShader, NULL, 0);
 
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	//deviceContext->DrawIndexed(indexCount, 0, 0);
+	deviceContext->DrawInstanced(vertexCount, instanceCount, 0, 0);
 }

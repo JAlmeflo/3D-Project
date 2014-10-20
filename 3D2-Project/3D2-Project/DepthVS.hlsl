@@ -13,6 +13,7 @@ cbuffer MatrixBuffer
 struct VertexInputType
 {
 	float4 position : POSITION;
+	float3 instancePosition : TEXCOORD0;
 };
 
 struct PixelInputType
@@ -27,6 +28,10 @@ PixelInputType main(VertexInputType input)
 	PixelInputType output;
 
 	input.position.w = 1.0f;
+
+	input.position.x += input.instancePosition.x;
+	input.position.y += input.instancePosition.y;
+	input.position.z += input.instancePosition.z;
 
 	output.position = mul(input.position, worldMatrix);
 	output.position = mul(output.position, viewMatrix);

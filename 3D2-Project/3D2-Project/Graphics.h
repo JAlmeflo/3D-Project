@@ -2,7 +2,7 @@
 
 // Globals
 const bool FULL_SCREEN = false;
-const bool VSYNC_ENABLED = true;
+const bool VSYNC_ENABLED = false;
 const float SCREEN_DEPTH = 500.0f;
 const float SCREEN_NEAR = 1.0f;
 
@@ -17,6 +17,7 @@ const int SHADOWMAP_HEIGHT = 2048;
 #include "Light.h"
 #include "RenderTexture.h"
 #include "DepthShader.h"
+#include "ParticleSystem.h"
 
 class Graphics
 {
@@ -27,6 +28,7 @@ public:
 	bool Initialize(int, int, HWND);
 	void Shutdown();
 	bool Frame();
+	void Update(float);
 private :
 	bool RenderSceneToTexture();
 	bool Render(float);
@@ -34,9 +36,11 @@ private :
 	D3DClass* m_D3D;
 	Camera* m_camera;
 	std::vector<Model*> m_models;
+	ParticleSystem* m_particleSystem;
 	RenderTexture* m_renderTexture;
 	DepthShader* m_depthShader;
 	Shader* m_shadowShader;
 	Light* m_light;
+	float rotation;
 };
 

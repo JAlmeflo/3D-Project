@@ -87,6 +87,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="OBJReader.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Publisher.cpp" />
     <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -106,6 +107,7 @@
     <ClInclude Include="LightShader.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="OBJReader.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Publisher.h" />
     <ClInclude Include="RenderTexture.h" />
     <ClInclude Include="Shader.h" />
