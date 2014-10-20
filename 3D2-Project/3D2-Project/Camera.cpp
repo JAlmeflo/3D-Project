@@ -121,31 +121,37 @@ void Camera::Update(bool p_keys[256], float deltaTime)
 	if (p_keys[0x57])
 	{
 		SetPosition(pos.x + sense * forward.x, pos.y + sense * forward.y, pos.z + sense * forward.z);
+		pos = GetPosition();
 	}
 	//a
 	if (p_keys[0x41])
 	{
 		SetPosition(pos.x - sense * right.x, pos.y - sense * right.y, pos.z - sense * right.z);
+		pos = GetPosition();
 	}
 	// s
 	if (p_keys[0x53])
 	{
 		SetPosition(pos.x - sense * forward.x, pos.y - sense * forward.y, pos.z - sense * forward.z);
+		pos = GetPosition();
 	}
 	// d
 	if (p_keys[0x44])
 	{
 		SetPosition(pos.x + sense * right.x, pos.y + sense * right.y, pos.z + sense * right.z);
+		pos = GetPosition();
 	}
 	// Space
 	if (p_keys[VK_SPACE])
 	{
 		SetPosition(pos.x + sense * up.x, pos.y + sense * up.y, pos.z + sense * up.z);
+		pos = GetPosition();
 	}
 	// Ctrl
 	if (p_keys[VK_CONTROL])
 	{
 		SetPosition(pos.x - sense * up.x, pos.y - sense * up.y, pos.z - sense * up.z);
+		pos = GetPosition();
 	}
 }
 
