@@ -6,7 +6,6 @@ Model::Model()
 	m_vertexBuffer = 0;
 	m_instanceBuffer = 0;
 	m_texture = 0;
-	m_model = 0;
 	m_instances = 0;
 }
 
@@ -46,7 +45,6 @@ void Model::Shutdown()
 {
 	ReleaseTexture();
 	ShutdownBuffers();
-	ReleaseModel();
 }
 
 void Model::Render(ID3D11DeviceContext* deviceContext)
@@ -288,10 +286,4 @@ bool Model::LoadModel(char* filename)
 	reader.Load(filename);
 
     return true;
-}
-
-void Model::ReleaseModel()
-{
-	delete[] m_model;
-	m_model = 0;
 }

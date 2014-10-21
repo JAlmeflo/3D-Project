@@ -18,6 +18,7 @@ const int SHADOWMAP_HEIGHT = 2048;
 #include "RenderTexture.h"
 #include "DepthShader.h"
 #include "ParticleSystem.h"
+#include "ParticleShader.h"
 
 class Graphics
 {
@@ -37,6 +38,7 @@ private :
 	Camera* m_camera;
 	std::vector<Model*> m_models;
 	ParticleSystem* m_particleSystem;
+	ParticleShader* m_particleShader;
 	RenderTexture* m_renderTexture;
 	DepthShader* m_depthShader;
 	Shader* m_shadowShader;

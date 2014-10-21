@@ -7,6 +7,7 @@ Graphics::Graphics()
 	m_camera = 0;
 	m_models = std::vector<Model*>();
 	m_particleSystem = 0;
+	m_particleShader = 0;
 	m_renderTexture = 0;
 	m_depthShader = 0;
 	m_shadowShader = 0;
@@ -75,7 +76,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the particle system
 	m_particleSystem = new ParticleSystem();
-	result = m_particleSystem->Initialize(m_D3D->GetDevice());
+	result = m_particleSystem->Initialize(m_D3D->GetDevice(), "../3D2-Project/Textures/dirt.jpg");
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize Particle system", "Error", MB_OK);
@@ -103,7 +104,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = m_depthShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, "Could not initialize the depth shader object.", "Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the depth shader.", "Error", MB_OK);
 		return false;
 	}
 
@@ -111,7 +112,15 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = m_shadowShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, "Could not initialize the texture shader object.", "Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the shadow shader.", "Error", MB_OK);
+		return false;
+	}
+
+	m_particleShader = new ParticleShader();
+	result = m_particleShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, "Could not initialize the particle system shader.", "Error", MB_OK);
 		return false;
 	}
 
@@ -140,6 +149,10 @@ void Graphics::Shutdown()
 	delete m_renderTexture;
 	m_renderTexture = 0;
 
+	m_particleShader->Shutdown();
+	delete m_particleShader;
+	m_particleShader = 0;
+
 	// Shutdown model
 	for (int i = 0; i < m_models.size(); i++)
 	{
@@ -166,6 +179,9 @@ void Graphics::Shutdown()
 bool Graphics::Frame()
 {
 	bool result;
+
+	m_particleSystem->Render(m_D3D->GetDeviceContext());
+
 	result = Render(rotation);
 	if (!result)
 	{
@@ -185,7 +201,7 @@ void Graphics::Update(float dt)
 
 	m_light->Rotate(rotation);
 
-	m_particleSystem->Update(dt, m_D3D->GetDevice());
+	m_particleSystem->Update(dt);
 }
 
 bool Graphics::RenderSceneToTexture()
@@ -253,9 +269,12 @@ bool Graphics::Render(float rotation)
 	m_light->GetViewMatrix(lightViewMatrix);
 	m_light->GetProjectionMatrix(lightProjectionMatrix);
 
+
+
 	// render models
 	for (int i = 0; i < m_models.size(); i++)
 	{
+		m_D3D->GetWorldMatrix(worldMatrix);
 		pos = m_models[i]->GetPosition();
 		D3DXMatrixTranslation(&worldMatrix, pos.x, pos.y, pos.z);
 
@@ -270,14 +289,25 @@ bool Graphics::Render(float rotation)
 		}
 		m_D3D->GetWorldMatrix(worldMatrix);
 	}
+	m_D3D->GetWorldMatrix(worldMatrix);
+
 
 	// render particle system 
-	result = m_particleSystem->Render(m_D3D->GetDeviceContext(), m_shadowShader, worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
-		m_renderTexture->GetShaderResourceView(), m_light->GetPosition(), m_light->GetAmbientColor(), m_light->GetDiffuseColor());
+	/*
+	m_D3D->TurnOnAlphaBlending();
+
+	pos = D3DXVECTOR3(-50.0f, 0.0f, -50.0f);
+	D3DXMatrixTranslation(&worldMatrix, pos.x, pos.y, pos.z);
+	m_particleSystem->Render(m_D3D->GetDeviceContext());
+
+	result = m_particleShader->Render(m_D3D->GetDeviceContext(), m_particleSystem->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_particleSystem->GetTexture());
 	if (!result)
 	{
 		return false;
 	}
+	m_D3D->TurnOffAlphaBlending();
+	*/
+
 	m_D3D->GetWorldMatrix(worldMatrix);
 
 	// Present the rendered scene to the screen
