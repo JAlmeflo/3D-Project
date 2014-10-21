@@ -62,20 +62,20 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 	van->SetPosition(-20, 0, 0);
 
-	//Van
-	Model* billboard = new Model();
-	result = billboard->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Face.obj", "../3D2-Project/Textures/dirt.jpg", 1);
+	//Bush
+	Model* bush = new Model();
+	result = bush->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Face.obj", "../3D2-Project/Textures/bush.png", 1);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
 		return false;
 	}
-	billboard->SetPosition(0, 0, 30);
+	bush->SetPosition(0, 0, 30);
 	
 	m_models.push_back(ground);
 	m_models.push_back(van);
 
-	m_billboadModels.push_back(billboard);
+	m_billboadModels.push_back(bush);
 
 	// Create the particle system
 	m_particleSystem = new ParticleSystem();
@@ -300,6 +300,8 @@ bool Graphics::Render(float rotation)
 	}
 	m_D3D->GetWorldMatrix(worldMatrix);
 
+	m_D3D->TurnOnAlphaBlending();
+
 	for (int i = 0; i < m_billboadModels.size(); i++)
 	{
 		m_D3D->GetWorldMatrix(worldMatrix);
@@ -318,6 +320,8 @@ bool Graphics::Render(float rotation)
 			lightViewMatrix, lightProjectionMatrix, m_billboadModels[i]->GetTexture(), m_renderTexture->GetShaderResourceView(), m_light->GetPosition(),
 			m_light->GetAmbientColor(), m_light->GetDiffuseColor());
 	}
+
+	m_D3D->TurnOffAlphaBlending();
 	// render particle system 
 	/*
 	m_D3D->TurnOnAlphaBlending();
