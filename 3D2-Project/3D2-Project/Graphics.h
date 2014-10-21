@@ -37,6 +37,7 @@ private :
 	D3DClass* m_D3D;
 	Camera* m_camera;
 	std::vector<Model*> m_models;
+	std::vector<Model*> m_billboadModels;
 	ParticleSystem* m_particleSystem;
 	ParticleShader* m_particleShader;
 	RenderTexture* m_renderTexture;

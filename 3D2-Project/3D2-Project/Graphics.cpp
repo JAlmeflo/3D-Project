@@ -6,6 +6,7 @@ Graphics::Graphics()
 	m_D3D = 0;
 	m_camera = 0;
 	m_models = std::vector<Model*>();
+	m_billboadModels = std::vector<Model*>();
 	m_particleSystem = 0;
 	m_particleShader = 0;
 	m_renderTexture = 0;
@@ -39,6 +40,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the model
 	m_models = std::vector<Model*>();
+	m_billboadModels = std::vector<Model*>();
 
 	// Ground
 	Model* ground = new Model();
@@ -61,18 +63,19 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	van->SetPosition(-20, 0, 0);
 
 	//Van
-	Model* van2 = new Model();
-	result = van2->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Van.obj", "../3D2-Project/Textures/Van.jpg", 5);
+	Model* billboard = new Model();
+	result = billboard->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Face.obj", "../3D2-Project/Textures/dirt.jpg", 1);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
 		return false;
 	}
-	van2->SetPosition(-10, 0, 10);
+	billboard->SetPosition(0, 0, 30);
 	
 	m_models.push_back(ground);
 	m_models.push_back(van);
-	//m_models.push_back(van2);
+
+	m_billboadModels.push_back(billboard);
 
 	// Create the particle system
 	m_particleSystem = new ParticleSystem();
@@ -161,6 +164,13 @@ void Graphics::Shutdown()
 	}
 	m_models.clear();
 
+	for (int i = 0; i < m_billboadModels.size(); i++)
+	{
+		m_billboadModels[i]->Shutdown();
+		delete m_billboadModels[i];
+	}
+	m_billboadModels.clear();
+
 	//Shutdown particle system
 	m_particleSystem->Shutdown();
 	delete m_particleSystem;
@@ -244,7 +254,7 @@ bool Graphics::RenderSceneToTexture()
 
 bool Graphics::Render(float rotation)
 {
-	D3DXMATRIX viewMatrix, worldMatrix, projectionMatrix;
+	D3DXMATRIX viewMatrix, worldMatrix, projectionMatrix, translateMatrix;
 	D3DXMATRIX lightViewMatrix, lightProjectionMatrix;
 	D3DXVECTOR3 pos;
 	bool result;
@@ -287,11 +297,27 @@ bool Graphics::Render(float rotation)
 		{
 			return false;
 		}
-		m_D3D->GetWorldMatrix(worldMatrix);
 	}
 	m_D3D->GetWorldMatrix(worldMatrix);
 
+	for (int i = 0; i < m_billboadModels.size(); i++)
+	{
+		m_D3D->GetWorldMatrix(worldMatrix);
+		pos = m_billboadModels[i]->GetPosition();
+		
+		double angle = atan2(pos.x - m_camera->GetPosition().x, pos.z - m_camera->GetPosition().z);
 
+		D3DXMatrixRotationY(&worldMatrix, angle);
+		D3DXMatrixTranslation(&translateMatrix, pos.x, pos.y, pos.z);
+
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+
+		m_billboadModels[i]->Render(m_D3D->GetDeviceContext());
+
+		result = m_shadowShader->Render(m_D3D->GetDeviceContext(), m_billboadModels[i]->GetVertexCount(), m_billboadModels[i]->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix,
+			lightViewMatrix, lightProjectionMatrix, m_billboadModels[i]->GetTexture(), m_renderTexture->GetShaderResourceView(), m_light->GetPosition(),
+			m_light->GetAmbientColor(), m_light->GetDiffuseColor());
+	}
 	// render particle system 
 	/*
 	m_D3D->TurnOnAlphaBlending();
