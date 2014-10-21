@@ -14,7 +14,7 @@ ParticleSystem::~ParticleSystem()
 bool ParticleSystem::Initialize(ID3D11Device* device)
 {
 	bool result;
-	spawnRate = 5;
+	spawnRate = 0.5f;
 	currentTime = 0;
 
 	m_particles = new Model();
@@ -45,7 +45,7 @@ void ParticleSystem::Update(float dt, ID3D11Device* device)
 	currentTime += dt;
 	if (currentTime >= spawnRate)
 	{
-		m_particles->SetNewInstanceObject(device);
+		//m_particles->SetNewInstanceObject(device);
 		currentTime -= spawnRate;
 	}
 }
