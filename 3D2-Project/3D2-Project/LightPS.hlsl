@@ -22,6 +22,7 @@ struct PixelInputType
 	float3 normal : NORMAL;
 	float4 lightViewPosition : TEXCOORD1;
 	float3 lightPos : TEXCOORD2;
+	float fogFactor : FOG;
 };
 
 // Pixel Shader
@@ -34,10 +35,13 @@ float4 main(PixelInputType input) : SV_TARGET
 	float2 projectTexCoord;
 	float depthValue;
 	float lightDepthValue;
+	float4 fogColor;
 
 	bias = 0.001f;
 
 	color = ambientColor;
+
+	fogColor = float4(0.5f, 0.5f, 0.5f, 1.0f);
 
 	// Calc projected texture coordinates
 	projectTexCoord.x = input.lightViewPosition.x / input.lightViewPosition.w * 0.5f + 0.5f;
@@ -76,7 +80,7 @@ float4 main(PixelInputType input) : SV_TARGET
 
 
 	textureColor = shaderTexture.Sample(samplerTypeWrap, input.tex);	
-	color = color * textureColor;
+	color = color * textureColor * input.fogFactor + (1.0 - input.fogFactor) * fogColor;
 
 	return color;
 }

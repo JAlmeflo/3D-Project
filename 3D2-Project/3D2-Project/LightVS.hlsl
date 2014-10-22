@@ -18,6 +18,14 @@ cbuffer LightBuffer2
 	float padding;
 }
 
+cbuffer FogBuffer
+{
+	float fogStart;
+	float fogEnd;
+	float padding1;
+	float padding2;
+};
+
 struct VertexInputType
 {
 	float4 position : POSITION;
@@ -33,6 +41,7 @@ struct PixelInputType
 	float3 normal : NORMAL;
 	float4 lightViewPosition : TEXCOORD1;
 	float3 lightPos : TEXCOORD2;
+	float fogFactor : FOG;
 };
 
 // Vertex Shader
@@ -40,6 +49,7 @@ PixelInputType main(VertexInputType input)
 {
 	PixelInputType output;
 	float4 worldPosition;
+	float4 cameraPosition;
 
 	input.position.w = 1.0f;
 
@@ -63,6 +73,12 @@ PixelInputType main(VertexInputType input)
 	worldPosition = mul(input.position, worldMatrix);
 	output.lightPos = lightPosition.xyz - worldPosition.xyz;
 	output.lightPos = normalize(output.lightPos);
+
+	// calc fog
+	cameraPosition = mul(input.position, worldMatrix);
+	cameraPosition = mul(cameraPosition, viewMatrix);
+
+	output.fogFactor = saturate((fogEnd - cameraPosition.z) / (fogEnd - fogStart));
 
 	return output;
 }

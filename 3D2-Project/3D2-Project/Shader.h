@@ -29,6 +29,14 @@ private:
 		D3DXVECTOR3 lightPosition;
 		float padding;
 	};
+
+	struct FogBufferType
+	{
+		float fogStart;
+		float fogEnd;
+		float padding1, padding2;
+	};
+
 public:
 	Shader();
 	~Shader();
@@ -54,5 +62,6 @@ private:
 	ID3D11Buffer* m_matrixBuffer;
 	ID3D11Buffer* m_lightBuffer;
 	ID3D11Buffer* m_lightBuffer2;
+	ID3D11Buffer* m_fogBuffer;
 };
 

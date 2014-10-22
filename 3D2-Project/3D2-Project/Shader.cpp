@@ -66,6 +66,7 @@ bool Shader::InitializeShader(ID3D11Device* device, HWND hwnd, LPCSTR vsFilename
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_BUFFER_DESC lightBufferDesc;
 	D3D11_BUFFER_DESC lightBufferDesc2;
+	D3D11_BUFFER_DESC fogBufferDesc;
 
 	errorMessage = 0;
 	vertexShaderBuffer = 0;
@@ -239,11 +240,28 @@ bool Shader::InitializeShader(ID3D11Device* device, HWND hwnd, LPCSTR vsFilename
 		return false;
 	}
 
+	// create fog desc in VS
+	fogBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	fogBufferDesc.ByteWidth = sizeof(FogBufferType);
+	fogBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	fogBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	fogBufferDesc.MiscFlags = 0;
+	fogBufferDesc.StructureByteStride = 0;
+
+	result = device->CreateBuffer(&fogBufferDesc, NULL, &m_fogBuffer);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 void Shader::ShutdownShader()
 {
+	m_fogBuffer->Release();
+	m_fogBuffer = 0;
+
 	m_lightBuffer->Release();
 	m_lightBuffer = 0;
 
@@ -302,6 +320,7 @@ bool Shader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX 
 	MatrixBufferType* dataPtr;
 	LightBufferType* dataPtr2;
 	LightBufferType2* dataPtr3;
+	FogBufferType* dataPtr4;
 
 	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
 	D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
@@ -374,6 +393,26 @@ bool Shader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX 
 
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_lightBuffer2);
 
+	// Fog
+	result = deviceContext->Map(m_fogBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	dataPtr4 = (FogBufferType*)mappedResource.pData;
+
+	// Copy
+	dataPtr4->fogStart = 10;
+	dataPtr4->fogEnd = 500;
+	dataPtr4->padding1 = 0.0f;
+	dataPtr4->padding2 = 0.0f;
+
+	deviceContext->Unmap(m_fogBuffer, 0);
+
+	bufferNumber = 2;
+
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_fogBuffer);
 	return true;
 }
 
