@@ -403,8 +403,8 @@ bool Shader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX 
 	dataPtr4 = (FogBufferType*)mappedResource.pData;
 
 	// Copy
-	dataPtr4->fogStart = 10;
-	dataPtr4->fogEnd = 500;
+	dataPtr4->fogStart = 20;
+	dataPtr4->fogEnd = 300;
 	dataPtr4->padding1 = 0.0f;
 	dataPtr4->padding2 = 0.0f;
 
