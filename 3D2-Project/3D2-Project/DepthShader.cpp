@@ -240,6 +240,5 @@ void DepthShader::RenderShader(ID3D11DeviceContext* deviceContext, int vertexCou
 	deviceContext->VSSetShader(m_vertexShader, NULL, 0);
 	deviceContext->PSSetShader(m_pixelShader, NULL, 0);
 
-	//deviceContext->DrawIndexed(indexCount, 0, 0);
 	deviceContext->DrawInstanced(vertexCount, instanceCount, 0, 0);
 }

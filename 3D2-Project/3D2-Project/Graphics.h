@@ -18,8 +18,6 @@ const int SHADOWMAP_HEIGHT = 2048;
 #include "Light.h"
 #include "RenderTexture.h"
 #include "DepthShader.h"
-#include "ParticleSystem.h"
-#include "ParticleShader.h"
 #include "Frustum.h"
 
 class Graphics
@@ -43,8 +41,6 @@ private :
 	//Model* m_ground;
 	std::vector<Model*> m_models;
 	std::vector<Model*> m_billboadModels;
-	ParticleSystem* m_particleSystem;
-	ParticleShader* m_particleShader;
 	RenderTexture* m_renderTexture;
 	DepthShader* m_depthShader;
 	Shader* m_shadowShader;

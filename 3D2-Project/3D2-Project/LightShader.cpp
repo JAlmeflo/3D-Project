@@ -112,7 +112,7 @@ bool LightShader::InitializeShader(ID3D11Device* device, HWND hwnd, LPCSTR vsFil
 		return false;
 	}
 
-	// Create the vertex input layout description.
+	// Create the vertex input layout desc
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
 	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
@@ -317,6 +317,5 @@ void LightShader::RenderShader(ID3D11DeviceContext* deviceContext, int indexCoun
 
 	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
 
-	// Render the triangle
 	deviceContext->DrawIndexed(indexCount, 0, 0);
 }

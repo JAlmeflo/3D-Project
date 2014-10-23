@@ -7,8 +7,6 @@ Graphics::Graphics()
 	m_camera = 0;
 	m_models = std::vector<Model*>();
 	m_billboadModels = std::vector<Model*>();
-	m_particleSystem = 0;
-	m_particleShader = 0;
 	m_renderTexture = 0;
 	m_depthShader = 0;
 	m_shadowShader = 0;
@@ -79,14 +77,6 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	m_billboadModels.push_back(bush);
 
-	// Create the particle system
-	m_particleSystem = new ParticleSystem();
-	result = m_particleSystem->Initialize(m_D3D->GetDevice(), "../3D2-Project/Textures/dirt.jpg");
-	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize Particle system", "Error", MB_OK);
-		return false;
-	}
 
 	// Create the light object
 	m_light = new Light();
@@ -121,14 +111,6 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	m_particleShader = new ParticleShader();
-	result = m_particleShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize the particle system shader.", "Error", MB_OK);
-		return false;
-	}
-
 	// create the frusutm
 	m_frustum = new Frustum();
 
@@ -155,10 +137,6 @@ void Graphics::Shutdown()
 	delete m_renderTexture;
 	m_renderTexture = 0;
 
-	m_particleShader->Shutdown();
-	delete m_particleShader;
-	m_particleShader = 0;
-
 	// Shutdown model
 	for (int i = 0; i < m_models.size(); i++)
 	{
@@ -173,11 +151,6 @@ void Graphics::Shutdown()
 		delete m_billboadModels[i];
 	}
 	m_billboadModels.clear();
-
-	//Shutdown particle system
-	m_particleSystem->Shutdown();
-	delete m_particleSystem;
-	m_particleSystem = 0;
 
 	// Shutdown camera
 	delete m_camera;
@@ -197,8 +170,6 @@ bool Graphics::Frame()
 {
 	bool result;
 
-	m_particleSystem->Render(m_D3D->GetDeviceContext());
-
 	result = Render(rotation);
 	if (!result)
 	{
@@ -217,8 +188,6 @@ void Graphics::Update(float dt)
 	}
 
 	m_light->Rotate(rotation);
-
-	m_particleSystem->Update(dt);
 }
 
 bool Graphics::RenderSceneToTexture()

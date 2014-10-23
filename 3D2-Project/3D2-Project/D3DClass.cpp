@@ -138,7 +138,6 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 
-	// Set the handle for the window to render to.
 	swapChainDesc.OutputWindow = hwnd;
 
 	swapChainDesc.SampleDesc.Count = 1;
@@ -296,14 +295,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	// Blend state
 	ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
 
-	//blendStateDesc.RenderTarget[0].BlendEnable = TRUE;
-	//blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-	//blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-	//blendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	//blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	//blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-	//blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	//blendStateDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
 	blendStateDesc.RenderTarget[0].BlendEnable = TRUE;
 	blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
@@ -473,13 +465,11 @@ void D3DClass::TurnOnAlphaBlending()
 	float blendFactor[4];
 
 
-	// Setup the blend factor.
 	blendFactor[0] = 0.0f;
 	blendFactor[1] = 0.0f;
 	blendFactor[2] = 0.0f;
 	blendFactor[3] = 0.0f;
 
-	// Turn on the alpha blending.
 	m_deviceContext->OMSetBlendState(m_alphaEnableBlendingState, blendFactor, 0xffffffff);
 }
 
@@ -488,12 +478,10 @@ void D3DClass::TurnOffAlphaBlending()
 	float blendFactor[4];
 
 
-	// Setup the blend factor.
 	blendFactor[0] = 0.0f;
 	blendFactor[1] = 0.0f;
 	blendFactor[2] = 0.0f;
 	blendFactor[3] = 0.0f;
 
-	// Turn off the alpha blending.
 	m_deviceContext->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
 }

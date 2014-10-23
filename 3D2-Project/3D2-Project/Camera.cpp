@@ -64,7 +64,7 @@ void Camera::Render()
 	lookAt.y = 0.0f;
 	lookAt.z = 1.0f;
 
-	// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians.
+	// convert to radians
 	pitch = m_rotationX * 0.0174532925f;
 	yaw = m_rotationY * 0.0174532925f;
 	roll = m_rotationZ * 0.0174532925f;

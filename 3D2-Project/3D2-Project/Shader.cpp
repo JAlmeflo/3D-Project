@@ -402,7 +402,6 @@ bool Shader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX 
 
 	dataPtr4 = (FogBufferType*)mappedResource.pData;
 
-	// Copy
 	dataPtr4->fogStart = 20;
 	dataPtr4->fogEnd = 200;
 	dataPtr4->padding1 = 0.0f;
@@ -426,7 +425,5 @@ void Shader::RenderShader(ID3D11DeviceContext* deviceContext, int vertexCount, i
 	deviceContext->PSSetSamplers(0, 1, &m_sampleStateClamp);
 	deviceContext->PSSetSamplers(0, 1, &m_sampleStateWrap);
 
-	// Render the triangle
 	deviceContext->DrawInstanced(vertexCount, instanceCount, 0, 0);
-	//deviceContext->DrawIndexed(indexCount, 0, 0);
 }

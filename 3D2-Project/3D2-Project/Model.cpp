@@ -128,18 +128,6 @@ bool Model::InitializeBuffers(ID3D11Device* device, int nrOfInstances)
 	D3D11_SUBRESOURCE_DATA vertexData, instanceData;
 	HRESULT result;
 
-	//vertices = new VertexType[m_vertexCount];
-	//indices = new unsigned long[m_indexCount];
-
-	//// Load the vertex array and index array with data.
-	//for (int i = 0; i<m_vertexCount; i++)
-	//{
-	//	vertices[i].position = D3DXVECTOR3(m_model[i].x, m_model[i].y, m_model[i].z);
-	//	vertices[i].texture = D3DXVECTOR2(m_model[i].tu, m_model[i].tv);
-	//	vertices[i].normal = D3DXVECTOR3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
-
-	//	indices[i] = i;
-	//}
 	m_vertexCount = reader.GetVertices().size();
 	vertices = new VertexType[m_vertexCount];
 
@@ -172,27 +160,6 @@ bool Model::InitializeBuffers(ID3D11Device* device, int nrOfInstances)
 		return false;
 	}
 
-	// Old index buffer
-	/*
-	// Set up the description of the static index buffer.
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned long)* m_indexCount;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.StructureByteStride = 0;
-
-	// Give the subresource structure a pointer to the index data.
-	indexData.pSysMem = indices;
-	indexData.SysMemPitch = 0;
-	indexData.SysMemSlicePitch = 0;
-
-	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
-	*/
 
 	// init instance desc
 	m_instanceCount = nrOfInstances;
@@ -230,14 +197,12 @@ bool Model::InitializeBuffers(ID3D11Device* device, int nrOfInstances)
 
 void Model::ShutdownBuffers()
 {
-	// Release the instance buffer.
 	if (m_instanceBuffer)
 	{
 		m_instanceBuffer->Release();
 		m_instanceBuffer = 0;
 	}
 
-	// Release the vertex buffer.
 	if (m_vertexBuffer)
 	{
 		m_vertexBuffer->Release();
@@ -265,7 +230,6 @@ void Model::RenderBuffers(ID3D11DeviceContext* deviceContext)
 
 	deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-	//deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -274,12 +238,6 @@ bool Model::LoadTexture(ID3D11Device* device, LPCSTR filename, LPCSTR filename2)
 {
 	HRESULT result;
 
-	//m_textures[0] = new Texture();
-	//result = m_textures[0]->Initialize(device, filename);
-	//if (!result)
-	//{
-	//	return false;
-	//}
 	result = D3DX11CreateShaderResourceViewFromFile(device, filename, NULL, NULL, &m_textures[0], NULL);
 	if (FAILED(result))
 	{
@@ -291,13 +249,6 @@ bool Model::LoadTexture(ID3D11Device* device, LPCSTR filename, LPCSTR filename2)
 	{
 		return false;
 	}
-
-	//m_textures[1] = new Texture();
-	//result = m_textures[1]->Initialize(device, filename2);
-	//if (!result)
-	//{
-	//	return false;
-	//}
 
 	return true;
 }
