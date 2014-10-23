@@ -1,8 +1,3 @@
-//float4 main( float4 pos : POSITION ) : SV_POSITION
-//{
-//	return pos;
-//}
-
 cbuffer MatrixBuffer
 {
 	matrix worldMatrix;
@@ -53,14 +48,17 @@ PixelInputType main(VertexInputType input)
 
 	input.position.w = 1.0f;
 
+	// change pos depending on instance diff
 	input.position.x += input.instancePosition.x;
 	input.position.y += input.instancePosition.y;
 	input.position.z += input.instancePosition.z;
 
+	// pos
 	output.position = mul(input.position, worldMatrix);
 	output.position = mul(output.position, viewMatrix);
 	output.position = mul(output.position, projectionMatrix);
 
+	// light pos
 	output.lightViewPosition = mul(input.position, worldMatrix);
 	output.lightViewPosition = mul(output.lightViewPosition, lightViewMatrix);
 	output.lightViewPosition = mul(output.lightViewPosition, lightProjectionMatrix);
@@ -74,10 +72,10 @@ PixelInputType main(VertexInputType input)
 	output.lightPos = lightPosition.xyz - worldPosition.xyz;
 	output.lightPos = normalize(output.lightPos);
 
-	// calc fog
 	cameraPosition = mul(input.position, worldMatrix);
 	cameraPosition = mul(cameraPosition, viewMatrix);
-
+	
+	// calc fogfactor
 	output.fogFactor = saturate((fogEnd - cameraPosition.z) / (fogEnd - fogStart));
 
 	return output;

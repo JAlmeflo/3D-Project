@@ -1,8 +1,3 @@
-//float4 main() : SV_TARGET
-//{
-//	return float4(1.0f, 1.0f, 1.0f, 1.0f);
-//}
-
 Texture2D shaderTexture[2];
 Texture2D depthMapTexture;
 
@@ -49,7 +44,7 @@ float4 main(PixelInputType input) : SV_TARGET
 	projectTexCoord.x = input.lightViewPosition.x / input.lightViewPosition.w * 0.5f + 0.5f;
 	projectTexCoord.y = -input.lightViewPosition.y / input.lightViewPosition.w * 0.5f + 0.5f;
 
-	// if (0-1) then pixel is in the view of light
+	// if texcoords is whitin (0-1) then pixel is in the view of light
 	if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
 	{
 		depthValue = depthMapTexture.Sample(samplerTypeClamp, projectTexCoord).r;
@@ -58,7 +53,7 @@ float4 main(PixelInputType input) : SV_TARGET
 		lightDepthValue = lightDepthValue - bias;
 
 		// Light hit the pixel
-		if (lightDepthValue < depthValue)
+		if (lightDepthValue <= depthValue)
 		{
 			lightIntensity = saturate(dot(input.normal, input.lightPos));
 
@@ -69,6 +64,7 @@ float4 main(PixelInputType input) : SV_TARGET
 			}
 		}
 	}
+	// point is outside of the shadowmap texture
 	else
 	{
 		lightIntensity = saturate(dot(input.normal, input.lightPos));
@@ -85,8 +81,8 @@ float4 main(PixelInputType input) : SV_TARGET
 	textureColor2 = shaderTexture[1].Sample(samplerTypeWrap, input.tex);
 
 	blendColor = textureColor * textureColor2 * 2.0f;
-
 	fogColor.a = textureColor.a;
+
 	color = color * blendColor * input.fogFactor + (1.0 - input.fogFactor) * fogColor;
 
 	return color;

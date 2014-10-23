@@ -206,7 +206,7 @@ bool Graphics::RenderSceneToTexture()
 	m_light->GetViewMatrix(lightViewMatrix);
 	m_light->GetProjectionMatrix(lightProjectionMatrix);
 
-	// for loop here
+	// render models
 	for (int i = 0; i < m_models.size(); i++)
 	{
 		m_D3D->GetWorldMatrix(worldMatrix);
@@ -269,7 +269,7 @@ bool Graphics::Render(float rotation)
 		bool renderModel = m_frustum->CheckRectangle2(pos.x + extremePos[0].x, pos.y + extremePos[0].y, pos.z + extremePos[0].z, 
 			pos.x + extremePos[1].x, pos.y + extremePos[1].y, pos.z + extremePos[1].y);
 
-		if (renderModel || i <= 0)
+		if (renderModel || i == 0)
 		{
 			m_modelCount++;
 			m_models[i]->Render(m_D3D->GetDeviceContext());
@@ -283,7 +283,6 @@ bool Graphics::Render(float rotation)
 			}
 		}
 	}
-	m_D3D->GetWorldMatrix(worldMatrix);
 
 	m_D3D->TurnOnAlphaBlending();
 
@@ -292,7 +291,6 @@ bool Graphics::Render(float rotation)
 	{
 		m_D3D->GetWorldMatrix(worldMatrix);
 		pos = m_billboadModels[i]->GetPosition();
-		D3DXVECTOR3* extremePos = m_models[i]->GetExtremePositions();
 		bool renderModel = m_frustum->CheckPoint(pos.x, pos.y, pos.z);
 
 		if (renderModel)
@@ -314,25 +312,8 @@ bool Graphics::Render(float rotation)
 	}
 
 	m_D3D->TurnOffAlphaBlending();
-	// render particle system 
-	/*
-	m_D3D->TurnOnAlphaBlending();
+	
 
-	pos = D3DXVECTOR3(-50.0f, 0.0f, -50.0f);
-	D3DXMatrixTranslation(&worldMatrix, pos.x, pos.y, pos.z);
-	m_particleSystem->Render(m_D3D->GetDeviceContext());
-
-	result = m_particleShader->Render(m_D3D->GetDeviceContext(), m_particleSystem->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_particleSystem->GetTexture());
-	if (!result)
-	{
-		return false;
-	}
-	m_D3D->TurnOffAlphaBlending();
-	*/
-
-	m_D3D->GetWorldMatrix(worldMatrix);
-
-	// Present the rendered scene to the screen
 	m_D3D->EndScene();
 
 	SetWindowTitle();
