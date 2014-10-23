@@ -8,6 +8,7 @@ Model::Model()
 	m_textures[0] = 0;
 	m_textures[1] = 0;
 	m_instances = 0;
+	m_extremePositions = 0;
 }
 
 
@@ -46,6 +47,8 @@ void Model::Shutdown()
 {
 	ReleaseTexture();
 	ShutdownBuffers();
+
+	m_extremePositions = 0;
 }
 
 void Model::Render(ID3D11DeviceContext* deviceContext)
@@ -65,10 +68,6 @@ int Model::GetInstanceCount()
 
 ID3D11ShaderResourceView** Model::GetTextureArray()
 {
-	//ID3D11ShaderResourceView* textures[2];
-	//textures[0] = m_textures[0]->GetTexture();
-	//textures[1] = m_textures[1]->GetTexture();
-
 	return m_textures;
 }
 
@@ -80,6 +79,11 @@ void Model::SetPosition(float x, float y, float z)
 D3DXVECTOR3 Model::GetPosition()
 {
 	return m_position;
+}
+
+D3DXVECTOR3* Model::GetExtremePositions()
+{
+	return m_extremePositions;
 }
 
 void Model::SetNewInstanceObject(ID3D11Device* device)
@@ -145,6 +149,7 @@ bool Model::InitializeBuffers(ID3D11Device* device, int nrOfInstances)
 		vertices[i].position = vertex.position;
 		vertices[i].texture = vertex.texture;
 		vertices[i].normal = vertex.normal;
+		CalcExtremePos(vertex.position);
 	}
 
 
@@ -311,4 +316,47 @@ bool Model::LoadModel(char* filename)
 	reader.Load(filename);
 
     return true;
+}
+
+void Model::CalcExtremePos(D3DXVECTOR3 pos)
+{
+	if (m_extremePositions == 0)
+	{
+		m_extremePositions = new D3DXVECTOR3();
+		m_extremePositions[0].x = pos.x;
+		m_extremePositions[0].y = pos.y;
+		m_extremePositions[0].z = pos.z;
+		m_extremePositions[1].x = pos.x;
+		m_extremePositions[1].y = pos.y;
+		m_extremePositions[1].z = pos.z;
+	}
+	else
+	{
+		if ( pos.x < m_extremePositions[0].x)
+		{
+			m_extremePositions[0].x = pos.x;
+		}
+		if (pos.y < m_extremePositions[0].y)
+		{
+			m_extremePositions[0].y = pos.y;
+		}
+		if (pos.z < m_extremePositions[0].z)
+		{
+			m_extremePositions[0].z = pos.z;
+		}
+
+		if (pos.x > m_extremePositions[1].x)
+		{
+			m_extremePositions[1].x = pos.x;
+		}
+		if (pos.y > m_extremePositions[1].y)
+		{
+			m_extremePositions[1].y = pos.y;
+		}
+		if (pos.z > m_extremePositions[1].z)
+		{
+			m_extremePositions[1].z = pos.z;
+		}
+	}
+	
 }

@@ -91,6 +91,11 @@ bool Frustum::CheckSphere(float x, float y, float z, float r)
 	return true;
 }
 
+bool Frustum::CheckCube(float x, float y, float z, float r)
+{
+	return CheckRectangle(x, y, z, r, r, r);
+}
+
 bool Frustum::CheckRectangle(float x, float y, float z, float xSize, float ySize, float zSize)
 {
 	for (int i = 0; i < 6; i++)
@@ -134,7 +139,45 @@ bool Frustum::CheckRectangle(float x, float y, float z, float xSize, float ySize
 	return true;
 }
 
-bool Frustum::CheckCube(float x, float y, float z, float r)
+bool Frustum::CheckRectangle2(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax)
 {
-	return CheckRectangle(x, y, z, r, r, r);
+	for (int i = 0; i < 6; i++)
+	{
+		if (D3DXPlaneDotCoord(&m_planes[i], &D3DXVECTOR3(xMin, yMin, zMin)) >= 0.0f)
+		{
+			continue;
+		}
+		if (D3DXPlaneDotCoord(&m_planes[i], &D3DXVECTOR3(xMax, yMin, zMin)) >= 0.0f)
+		{
+			continue;
+		}
+		if (D3DXPlaneDotCoord(&m_planes[i], &D3DXVECTOR3(xMin, yMax, zMin)) >= 0.0f)
+		{
+			continue;
+		}
+		if (D3DXPlaneDotCoord(&m_planes[i], &D3DXVECTOR3(xMax, yMax, zMin )) >= 0.0f)
+		{
+			continue;
+		}
+		if (D3DXPlaneDotCoord(&m_planes[i], &D3DXVECTOR3(xMin, yMin, zMax)) >= 0.0f)
+		{
+			continue;
+		}
+		if (D3DXPlaneDotCoord(&m_planes[i], &D3DXVECTOR3(xMax, yMin , zMax)) >= 0.0f)
+		{
+			continue;
+		}
+		if (D3DXPlaneDotCoord(&m_planes[i], &D3DXVECTOR3(xMin, yMax, zMax)) >= 0.0f)
+		{
+			continue;
+		}
+		if (D3DXPlaneDotCoord(&m_planes[i], &D3DXVECTOR3(xMax, yMax, zMax)) >= 0.0f)
+		{
+			continue;
+		}
+
+		return false;
+	}
+
+	return true;
 }

@@ -14,6 +14,7 @@ public:
 	bool CheckCube(float, float, float, float);
 	bool CheckSphere(float, float, float, float);
 	bool CheckRectangle(float, float, float, float, float, float);
+	bool CheckRectangle2(float, float, float, float, float, float);
 private:
 	D3DXPLANE m_planes[6];
 };

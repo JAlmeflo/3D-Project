@@ -38,6 +38,7 @@ public:
 
 	void SetPosition(float, float, float);
 	D3DXVECTOR3 GetPosition();
+	D3DXVECTOR3* GetExtremePositions();
 
 	void SetNewInstanceObject(ID3D11Device*);
 private:
@@ -49,12 +50,14 @@ private:
 	void ReleaseTexture();
 
 	bool LoadModel(char*);
+	void CalcExtremePos(D3DXVECTOR3);
 
 	ID3D11Buffer *m_vertexBuffer, *m_instanceBuffer;
 	int m_vertexCount, m_instanceCount;
 	ID3D11ShaderResourceView* m_textures[2];
 	OBJReader reader;
 	D3DXVECTOR3 m_position;
+	D3DXVECTOR3* m_extremePositions;
 	InstanceType* m_instances;
 };
 
