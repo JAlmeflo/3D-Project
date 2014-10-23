@@ -10,6 +10,7 @@ const int SHADOWMAP_WIDTH = 2048;
 const int SHADOWMAP_HEIGHT = 2048;
 
 #include <Windows.h>
+#include <string>
 #include "D3DClass.h"
 #include "Camera.h"
 #include "Model.h"
@@ -19,6 +20,7 @@ const int SHADOWMAP_HEIGHT = 2048;
 #include "DepthShader.h"
 #include "ParticleSystem.h"
 #include "ParticleShader.h"
+#include "Frustum.h"
 
 class Graphics
 {
@@ -33,9 +35,12 @@ public:
 private :
 	bool RenderSceneToTexture();
 	bool Render(float);
+	void SetWindowTitle();
 
+	HWND m_hwnd;
 	D3DClass* m_D3D;
 	Camera* m_camera;
+	//Model* m_ground;
 	std::vector<Model*> m_models;
 	std::vector<Model*> m_billboadModels;
 	ParticleSystem* m_particleSystem;
@@ -45,5 +50,7 @@ private :
 	Shader* m_shadowShader;
 	Light* m_light;
 	float rotation;
+	Frustum* m_frustum;
+	int m_modelCount;
 };
 

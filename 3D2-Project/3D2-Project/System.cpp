@@ -297,5 +297,5 @@ void System::SetWindowTitle()
 	text.append(std::to_string((int)m_fps));
 
 	
-	SetWindowTextA(m_hwnd, (LPCSTR)text.c_str());
+	//SetWindowTextA(m_hwnd, (LPCSTR)text.c_str());
 }

@@ -13,6 +13,7 @@ Graphics::Graphics()
 	m_depthShader = 0;
 	m_shadowShader = 0;
 	m_light = 0;
+	m_frustum = 0;
 }
 
 
@@ -22,6 +23,7 @@ Graphics::~Graphics()
 
 bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
+	m_hwnd = hwnd;
 	bool result;
 	rotation = 0.0f;
 
@@ -127,7 +129,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-
+	// create the frusutm
+	m_frustum = new Frustum();
 
 	return true;
 }
@@ -184,6 +187,10 @@ void Graphics::Shutdown()
 	m_D3D->Shutdown();
 	delete m_D3D;
 	m_D3D = 0;
+
+	// shutdown frustum
+	delete m_frustum;
+	m_frustum = 0;
 }
 
 bool Graphics::Frame()
@@ -258,6 +265,7 @@ bool Graphics::Render(float rotation)
 	D3DXMATRIX lightViewMatrix, lightProjectionMatrix;
 	D3DXVECTOR3 pos;
 	bool result;
+	m_modelCount = 0;
 
 	// rendedr scene to texture
 	result = RenderSceneToTexture();
@@ -279,7 +287,7 @@ bool Graphics::Render(float rotation)
 	m_light->GetViewMatrix(lightViewMatrix);
 	m_light->GetProjectionMatrix(lightProjectionMatrix);
 
-
+	m_frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
 
 	// render models
 	for (int i = 0; i < m_models.size(); i++)
@@ -288,37 +296,52 @@ bool Graphics::Render(float rotation)
 		pos = m_models[i]->GetPosition();
 		D3DXMatrixTranslation(&worldMatrix, pos.x, pos.y, pos.z);
 
-		m_models[i]->Render(m_D3D->GetDeviceContext());
-		
-		result = m_shadowShader->Render(m_D3D->GetDeviceContext(), m_models[i]->GetVertexCount(), m_models[i]->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix,
-			lightViewMatrix, lightProjectionMatrix, m_models[i]->GetTextureArray(), m_renderTexture->GetShaderResourceView(), m_light->GetPosition(),
-			m_light->GetAmbientColor(), m_light->GetDiffuseColor());
-		if (!result)
+		D3DXVECTOR3* extremePos = m_models[i]->GetExtremePositions();
+		bool renderModel = m_frustum->CheckRectangle2(pos.x + extremePos[0].x, pos.y + extremePos[0].y, pos.z + extremePos[0].z, 
+			pos.x + extremePos[1].x, pos.y + extremePos[1].y, pos.z + extremePos[1].y);
+
+		if (renderModel || i <= 0)
 		{
-			return false;
+			m_modelCount++;
+			m_models[i]->Render(m_D3D->GetDeviceContext());
+
+			result = m_shadowShader->Render(m_D3D->GetDeviceContext(), m_models[i]->GetVertexCount(), m_models[i]->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix,
+				lightViewMatrix, lightProjectionMatrix, m_models[i]->GetTextureArray(), m_renderTexture->GetShaderResourceView(), m_light->GetPosition(),
+				m_light->GetAmbientColor(), m_light->GetDiffuseColor());
+			if (!result)
+			{
+				return false;
+			}
 		}
 	}
 	m_D3D->GetWorldMatrix(worldMatrix);
 
 	m_D3D->TurnOnAlphaBlending();
 
+	//render billboard models
 	for (int i = 0; i < m_billboadModels.size(); i++)
 	{
 		m_D3D->GetWorldMatrix(worldMatrix);
 		pos = m_billboadModels[i]->GetPosition();
-		
-		double angle = atan2(pos.x - m_camera->GetPosition().x, pos.z - m_camera->GetPosition().z);
+		D3DXVECTOR3* extremePos = m_models[i]->GetExtremePositions();
+		bool renderModel = m_frustum->CheckPoint(pos.x, pos.y, pos.z);
 
-		D3DXMatrixRotationY(&worldMatrix, angle);
-		D3DXMatrixTranslation(&translateMatrix, pos.x, pos.y, pos.z);
+		if (renderModel)
+		{
+			m_modelCount++;
+			double angle = atan2(pos.x - m_camera->GetPosition().x, pos.z - m_camera->GetPosition().z);
 
-		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+			D3DXMatrixRotationY(&worldMatrix, angle);
+			D3DXMatrixTranslation(&translateMatrix, pos.x, pos.y, pos.z);
 
-		m_billboadModels[i]->Render(m_D3D->GetDeviceContext());
+			D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 
-		result = m_shadowShader->Render(m_D3D->GetDeviceContext(), m_billboadModels[i]->GetVertexCount(), m_billboadModels[i]->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix,
-			lightViewMatrix, lightProjectionMatrix, m_billboadModels[i]->GetTextureArray(), m_renderTexture->GetShaderResourceView(), m_light->GetPosition(),
-			m_light->GetAmbientColor(), m_light->GetDiffuseColor());
+			m_billboadModels[i]->Render(m_D3D->GetDeviceContext());
+
+			result = m_shadowShader->Render(m_D3D->GetDeviceContext(), m_billboadModels[i]->GetVertexCount(), m_billboadModels[i]->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix,
+				lightViewMatrix, lightProjectionMatrix, m_billboadModels[i]->GetTextureArray(), m_renderTexture->GetShaderResourceView(), m_light->GetPosition(),
+				m_light->GetAmbientColor(), m_light->GetDiffuseColor());
+		}
 	}
 
 	m_D3D->TurnOffAlphaBlending();
@@ -343,5 +366,16 @@ bool Graphics::Render(float rotation)
 	// Present the rendered scene to the screen
 	m_D3D->EndScene();
 
+	SetWindowTitle();
+
 	return true;
+}
+
+void Graphics::SetWindowTitle()
+{
+	std::string text;
+	text = "Models rendered:   ";
+	text.append(std::to_string((int)m_modelCount));
+
+	SetWindowTextA(m_hwnd, (LPCSTR)text.c_str());
 }
