@@ -80,6 +80,7 @@
     <ClCompile Include="ColorShader.cpp" />
     <ClCompile Include="D3DClass.cpp" />
     <ClCompile Include="DepthShader.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -103,6 +104,7 @@
     <ClInclude Include="ColorShader.h" />
     <ClInclude Include="D3DClass.h" />
     <ClInclude Include="DepthShader.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Light.h" />
