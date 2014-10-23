@@ -91,11 +91,6 @@ bool Frustum::CheckSphere(float x, float y, float z, float r)
 	return true;
 }
 
-bool Frustum::CheckCube(float x, float y, float z, float r)
-{
-	return CheckRectangle(x, y, z, r, r, r);
-}
-
 bool Frustum::CheckRectangle(float x, float y, float z, float xSize, float ySize, float zSize)
 {
 	for (int i = 0; i < 6; i++)
