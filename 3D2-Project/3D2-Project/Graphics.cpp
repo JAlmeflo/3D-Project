@@ -44,7 +44,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Ground
 	Model* ground = new Model();
-	result = ground->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Ground.obj", "../3D2-Project/Textures/Ground.jpg", 1);
+	result = ground->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Ground.obj", "../3D2-Project/Textures/Ground.jpg", "../3D2-Project/Textures/Ground.jpg", 1);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
@@ -54,7 +54,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	//Van
 	Model* van = new Model();
-	result = van->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Van.obj", "../3D2-Project/Textures/Van.jpg", 3);
+	result = van->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Van.obj", "../3D2-Project/Textures/Van.jpg", "../3D2-Project/Textures/grass.jpg", 3);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
@@ -64,7 +64,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	//Bush
 	Model* bush = new Model();
-	result = bush->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Face.obj", "../3D2-Project/Textures/bush.png", 1);
+	result = bush->Initialize(m_D3D->GetDevice(), "../3D2-Project/Obj/Face.obj", "../3D2-Project/Textures/bush.png", "../3D2-Project/Textures/grass.jpg", 1);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
@@ -291,7 +291,7 @@ bool Graphics::Render(float rotation)
 		m_models[i]->Render(m_D3D->GetDeviceContext());
 		
 		result = m_shadowShader->Render(m_D3D->GetDeviceContext(), m_models[i]->GetVertexCount(), m_models[i]->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix,
-			lightViewMatrix, lightProjectionMatrix, m_models[i]->GetTexture(), m_renderTexture->GetShaderResourceView(), m_light->GetPosition(),
+			lightViewMatrix, lightProjectionMatrix, m_models[i]->GetTextureArray(), m_renderTexture->GetShaderResourceView(), m_light->GetPosition(),
 			m_light->GetAmbientColor(), m_light->GetDiffuseColor());
 		if (!result)
 		{
@@ -317,7 +317,7 @@ bool Graphics::Render(float rotation)
 		m_billboadModels[i]->Render(m_D3D->GetDeviceContext());
 
 		result = m_shadowShader->Render(m_D3D->GetDeviceContext(), m_billboadModels[i]->GetVertexCount(), m_billboadModels[i]->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix,
-			lightViewMatrix, lightProjectionMatrix, m_billboadModels[i]->GetTexture(), m_renderTexture->GetShaderResourceView(), m_light->GetPosition(),
+			lightViewMatrix, lightProjectionMatrix, m_billboadModels[i]->GetTextureArray(), m_renderTexture->GetShaderResourceView(), m_light->GetPosition(),
 			m_light->GetAmbientColor(), m_light->GetDiffuseColor());
 	}
 

@@ -5,7 +5,8 @@ Model::Model()
 {
 	m_vertexBuffer = 0;
 	m_instanceBuffer = 0;
-	m_texture = 0;
+	m_textures[0] = 0;
+	m_textures[1] = 0;
 	m_instances = 0;
 }
 
@@ -14,7 +15,7 @@ Model::~Model()
 {
 }
 
-bool Model::Initialize(ID3D11Device* device, char* modelFilename, LPCSTR textureFilename, int nrOfInstances)
+bool Model::Initialize(ID3D11Device* device, char* modelFilename, LPCSTR textureFilename, LPCSTR textureFilename2, int nrOfInstances)
 {
 	bool result;
 
@@ -32,7 +33,7 @@ bool Model::Initialize(ID3D11Device* device, char* modelFilename, LPCSTR texture
 		return false;
 	}
 
-	result = LoadTexture(device, textureFilename);
+	result = LoadTexture(device, textureFilename, textureFilename2);
 	if (!result)
 	{
 		return false;
@@ -62,9 +63,13 @@ int Model::GetInstanceCount()
 	return m_instanceCount;
 }
 
-ID3D11ShaderResourceView* Model::GetTexture()
+ID3D11ShaderResourceView** Model::GetTextureArray()
 {
-	return m_texture->GetTexture();
+	//ID3D11ShaderResourceView* textures[2];
+	//textures[0] = m_textures[0]->GetTexture();
+	//textures[1] = m_textures[1]->GetTexture();
+
+	return m_textures;
 }
 
 void Model::SetPosition(float x, float y, float z)
@@ -260,25 +265,45 @@ void Model::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-bool Model::LoadTexture(ID3D11Device* device, LPCSTR filename)
+bool Model::LoadTexture(ID3D11Device* device, LPCSTR filename, LPCSTR filename2)
 {
-	bool result;
+	HRESULT result;
 
-	m_texture = new Texture();
-	result = m_texture->Initialize(device, filename);
-	if (!result)
+	//m_textures[0] = new Texture();
+	//result = m_textures[0]->Initialize(device, filename);
+	//if (!result)
+	//{
+	//	return false;
+	//}
+	result = D3DX11CreateShaderResourceViewFromFile(device, filename, NULL, NULL, &m_textures[0], NULL);
+	if (FAILED(result))
 	{
 		return false;
 	}
+
+	result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	//m_textures[1] = new Texture();
+	//result = m_textures[1]->Initialize(device, filename2);
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	return true;
 }
 
 void Model::ReleaseTexture()
 {
-	m_texture->Shutdown();
-	delete m_texture;
-	m_texture = 0;
+	m_textures[0]->Release();
+	m_textures[0] = 0;
+
+	m_textures[1]->Release();
+	m_textures[1] = 0;
 }
 
 bool Model::LoadModel(char* filename)

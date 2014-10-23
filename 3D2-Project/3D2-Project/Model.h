@@ -28,13 +28,13 @@ public:
 	Model();
 	~Model();
 
-	bool Initialize(ID3D11Device*, char*, LPCSTR, int);
+	bool Initialize(ID3D11Device*, char*, LPCSTR, LPCSTR, int);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
 	int GetVertexCount();
 	int GetInstanceCount();
-	ID3D11ShaderResourceView* GetTexture();
+	ID3D11ShaderResourceView** GetTextureArray();
 
 	void SetPosition(float, float, float);
 	D3DXVECTOR3 GetPosition();
@@ -45,14 +45,14 @@ private:
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);
 
-	bool LoadTexture(ID3D11Device*, LPCSTR);
+	bool LoadTexture(ID3D11Device*, LPCSTR, LPCSTR);
 	void ReleaseTexture();
 
 	bool LoadModel(char*);
 
 	ID3D11Buffer *m_vertexBuffer, *m_instanceBuffer;
 	int m_vertexCount, m_instanceCount;
-	Texture* m_texture;
+	ID3D11ShaderResourceView* m_textures[2];
 	OBJReader reader;
 	D3DXVECTOR3 m_position;
 	InstanceType* m_instances;

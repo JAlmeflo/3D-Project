@@ -37,13 +37,13 @@ void Shader::Shutdown()
 }
 
 bool Shader::Render(ID3D11DeviceContext* deviceContext, int vertexCount, int instanceCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix,
-	D3DXMATRIX lightViewMatrix, D3DXMATRIX lightProjectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* depthMapTexture,
+	D3DXMATRIX lightViewMatrix, D3DXMATRIX lightProjectionMatrix, ID3D11ShaderResourceView** textureArray, ID3D11ShaderResourceView* depthMapTexture,
 	D3DXVECTOR3 lightPosition, D3DXVECTOR4 ambientColor, D3DXVECTOR4 diffuseColor)
 {
 	bool result;
 
 	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix, 
-		texture, depthMapTexture, lightPosition, ambientColor, diffuseColor);
+		textureArray, depthMapTexture, lightPosition, ambientColor, diffuseColor);
 	if (!result)
 	{
 		return false;
@@ -311,7 +311,7 @@ void Shader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, LPCST
 }
 
 bool Shader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix,
-	D3DXMATRIX lightViewMatrix, D3DXMATRIX lightProjectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* depthMapTexture,
+	D3DXMATRIX lightViewMatrix, D3DXMATRIX lightProjectionMatrix, ID3D11ShaderResourceView** textureArray, ID3D11ShaderResourceView* depthMapTexture,
 	D3DXVECTOR3 lightPosition, D3DXVECTOR4 ambientColor, D3DXVECTOR4 diffuseColor)
 {
 	HRESULT result;
@@ -351,9 +351,9 @@ bool Shader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX 
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
 
 	// Set shader texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(0, 1, &texture);
+	deviceContext->PSSetShaderResources(0, 2, textureArray);
 	// Set shadow map texture
-	deviceContext->PSSetShaderResources(1, 1, &depthMapTexture);
+	deviceContext->PSSetShaderResources(2, 1, &depthMapTexture);
 
 	// Light
 	result = deviceContext->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

@@ -3,11 +3,11 @@
 //	return float4(1.0f, 1.0f, 1.0f, 1.0f);
 //}
 
-Texture2D shaderTexture : register(t0);
-Texture2D depthMapTexture : register(t1);
+Texture2D shaderTexture[2];
+Texture2D depthMapTexture;
 
-SamplerState samplerTypeClamp : register(s0);
-SamplerState samplerTypeWrap : register(s1);
+SamplerState samplerTypeClamp;
+SamplerState samplerTypeWrap;
 
 cbuffer LightBuffer
 {
@@ -30,6 +30,8 @@ float4 main(PixelInputType input) : SV_TARGET
 {
 	float bias;
 	float4 textureColor;
+	float4 textureColor2;
+	float4 blendColor;
 	float lightIntensity;
 	float4 color;
 	float2 projectTexCoord;
@@ -76,12 +78,16 @@ float4 main(PixelInputType input) : SV_TARGET
 			color += (diffuseColor * lightIntensity);
 			color = saturate(color);
 		}
-	}
+	}	
+	
 
+	textureColor = shaderTexture[0].Sample(samplerTypeWrap, input.tex);
+	textureColor2 = shaderTexture[1].Sample(samplerTypeWrap, input.tex);
 
-	textureColor = shaderTexture.Sample(samplerTypeWrap, input.tex);
+	blendColor = textureColor * textureColor2 * 2.0f;
+
 	fogColor.a = textureColor.a;
-	color = color * textureColor * input.fogFactor + (1.0 - input.fogFactor) * fogColor;
+	color = color * blendColor * input.fogFactor + (1.0 - input.fogFactor) * fogColor;
 
 	return color;
 }
